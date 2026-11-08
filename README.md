@@ -1,4 +1,4 @@
-# Modern SEO: The Unified Search & AI Answer Engine Optimization (SEO + GEO + AEO) Skill
+# Sniper SEO + GEO + AEO: The Unified Search & AI Answer Engine Optimization Skill
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Platform: Agent Skill](https://img.shields.io/badge/Platform-Antigravity%20%7C%20Claude%20%7C%20Cursor-purple.svg)](#installation)
@@ -7,7 +7,7 @@
 > **The Modern Search Law (2026):**  
 > What ranks #1 on Google is precisely what AI answer engines (ChatGPT Search, Perplexity, Claude, Gemini, Google AI Overviews) synthesize and cite. Both demand the exact same foundation: machine-readable infrastructure, verified entity knowledge graphs, high information gain, and direct, extractable answers.
 
-`modern-seo` is an open-source, battle-tested AI agent skill that unifies **Traditional SEO**, **Generative Engine Optimization (GEO)**, and **Answer Engine Optimization (AEO)** into one cohesive operating system.
+`sniper-seo-geo-aeo` is an open-source, battle-tested AI agent skill that unifies **Traditional SEO**, **Generative Engine Optimization (GEO)**, **Answer Engine Optimization (AEO)**, and the **Content Humanizer** into one cohesive operating system.
 
 ---
 
@@ -16,23 +16,23 @@
 ### 1. Google Antigravity & Gemini CLI
 Clone directly into your personal agent skills directory:
 ```bash
-git clone https://github.com/grvmon/modern-seo-skill.git ~/.gemini/config/skills/modern-seo
+git clone https://github.com/grvmon/sniper-seo-geo-aeo.git ~/.gemini/config/skills/sniper-seo-geo-aeo
 ```
 
 ### 2. Claude Code & Claude Desktop
 Add to your Claude skills directory:
 ```bash
-git clone https://github.com/grvmon/modern-seo-skill.git ~/.claude/skills/modern-seo
+git clone https://github.com/grvmon/sniper-seo-geo-aeo.git ~/.claude/skills/sniper-seo-geo-aeo
 ```
 
 ### 3. Cursor & Windsurf Projects
 Drop directly into your project's agent skills directory:
 ```bash
-git clone https://github.com/grvmon/modern-seo-skill.git .cursor/skills/modern-seo
+git clone https://github.com/grvmon/sniper-seo-geo-aeo.git .cursor/skills/sniper-seo-geo-aeo
 ```
 
 Once installed, simply ask your agent:
-> *"Audit this page using modern-seo"*  
+> *"Audit this page using sniper-seo"*  
 > *"Optimize this article for Perplexity and Google AI Overviews"*  
 > *"Generate a consolidated schema graph for our site"*  
 > *"Humanize this content draft to improve dwell time and remove AI cadence"*

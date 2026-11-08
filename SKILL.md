@@ -1,9 +1,9 @@
 ---
-name: modern-seo
+name: sniper-seo-geo-aeo
 description: The definitive modern SEO, GEO (Generative Engine Optimization), and AEO (Answer Engine Optimization) master skill. Unifies traditional Google/Bing ranking factors with AI answer engine citation mechanics (Google AI Overviews, ChatGPT Search, Perplexity, Gemini, Claude). Covers algorithmic ranking levers (Information Gain, NavBoost dwell signals, E-E-A-T entity graphs), the Content Humanizer (writing for real humans, plain English, conversational empathy, anti-AI cadence), technical crawlability & AI crawler permissions, /llms.txt, full Schema @graph generation, 45-word extractable answer passages, platform-specific GEO matrices, and regression drift detection.
 ---
 
-# Modern SEO + GEO + AEO Master Operating System
+# Sniper SEO + GEO + AEO Master Operating System
 
 > **The Modern Search Law (2026):**
 > What ranks #1 on Google is precisely what AI answer engines (ChatGPT Search, Perplexity, Claude, Gemini, Google AI Overviews) synthesize and cite. Both demand the exact same foundation: machine-readable infrastructure, verified entity knowledge graphs, high information gain, and direct, extractable answers.
