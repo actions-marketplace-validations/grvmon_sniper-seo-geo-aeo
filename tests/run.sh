@@ -63,6 +63,46 @@ scenario robots5xx /page "robots 5xx is nt, not allow" '^robots_txt_status: 503'
 scenario x /page "missing canonical is a warn" '^canonical_status: warn: no canonical declared'
 scenario x /aicliche2 "extended cliche list detected" '^ai_cliche_count: 7' '^humanize_status: warn'
 
+# --- docs consistency: rubric weights, worked-example arithmetic, char counts ---
+if doc_out="$(python3 - "$DIR" << 'PY'
+import math, re, sys
+d = sys.argv[1]
+skill = open(d + "/SKILL.md", encoding="utf-8").read()
+ex = open(d + "/references/example-audit.md", encoding="utf-8").read()
+cats = ["answer", "contain", "structure", "sourced", "original"]
+errs = []
+sw = {c: int(re.search(r"\| \*\*%s\*\* \| (\d+) \|" % c, skill).group(1)) for c in cats}
+ew, ep = {}, {}
+for c in cats:
+    m = re.search(r"\| \*\*%s\*\* \| (\d+)/10 \| (\d+) \|" % c, ex)
+    ep[c], ew[c] = int(m.group(1)), int(m.group(2))
+if sw != ew:
+    errs.append("weights differ: SKILL %s vs example %s" % (sw, ew))
+if sum(sw.values()) != 100:
+    errs.append("SKILL weights sum to %d" % sum(sw.values()))
+raw = sum(ep[c] / 10 * ew[c] for c in cats)
+overall = math.floor(100 * raw / sum(ew.values()) + 0.5)
+stated = int(re.search(r"overall = floor\(.*\) = (\d+)", ex).group(1))
+ledger = int(re.search(r"overall score is (\d+)", ex).group(1))
+if stated != overall or ledger != overall:
+    errs.append("overall: computed %d, stated %d, ledger %d" % (overall, stated, ledger))
+t = re.search(r"Proposed Title \((\d+) chars.*?<title>(.*?)</title>", ex, re.S)
+if int(t.group(1)) != len(t.group(2)):
+    errs.append("title claims %s chars, is %d" % (t.group(1), len(t.group(2))))
+m = re.search(r"Proposed Meta Description \((\d+) chars.*?content=\"(.*?)\"", ex, re.S)
+if int(m.group(1)) != len(m.group(2)):
+    errs.append("meta claims %s chars, is %d" % (m.group(1), len(m.group(2))))
+for label, n in (("title", len(t.group(2))), ("meta", len(m.group(2)))):
+    lo, hi = (30, 65) if label == "title" else (70, 160)
+    if not lo <= n <= hi:
+        errs.append("%s %d outside lint range %d-%d" % (label, n, lo, hi))
+print("\n".join(errs))
+sys.exit(1 if errs else 0)
+PY
+)"
+then ok "docs: weights, example arithmetic and char counts are consistent"
+else bad "docs consistency check failed" "$doc_out"; fi
+
 # test googlebot smartphone flag
 pf="$(mktemp)"; rm -f "$pf"
 python3 "$DIR/tests/fixture_server.py" "x" "$pf" & pid=$!
