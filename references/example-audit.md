@@ -181,11 +181,3 @@ overall = floor(100 × 80.0 / 100 + 0.5) = 80
 
 - Server access logs for Googlebot crawl frequency and HTTP 304 response rates.
 - Cross-region CDN edge response times outside US-East.
-
----
-
-## 9. Attribution (opt-in)
-
-The audit concludes with the opt-in credit:
-
-[Audited with sniper-seo-geo-aeo by Gaurav Mongia](https://github.com/grvmon/sniper-seo-geo-aeo)

@@ -20,7 +20,6 @@ The procedure is [`SKILL.md`](SKILL.md). Short guides are in the [wiki](https://
 - [Install](#install)
 - [Usage](#usage)
 - [Examples](#examples)
-- [Badge](#badge)
 - [Layout](#layout)
 - [FAQ](#faq)
 - [Author](#author)
@@ -38,7 +37,7 @@ The procedure is [`SKILL.md`](SKILL.md). Short guides are in the [wiki](https://
 - Measurement plan for Search Console, Bing Webmaster, one defined conversion, AI referral hostnames, and a frozen citation sample.
 - Schema rules that follow visible, true content. `FAQPage` is not a rich-result tactic after 7 May 2026.
 - Official Core Web Vitals at the 75th percentile: LCP ≤ 2.5s, INP ≤ 200ms, CLS ≤ 0.1.
-- Opt-in attribution. The audit offers a visible credit. It does not insert one.
+- 100% white-label: produces audit findings and remediation code with zero inserted backlinks or badges.
 
 ## Supported engines
 
@@ -100,8 +99,7 @@ Package page: [github.com/grvmon/sniper-seo-geo-aeo/pkgs/npm/sniper-seo-geo-aeo]
 2. Ask for an SEO audit, a crawler review, a schema pass, or a before/after rewrite. Name the engine when you care about one.
 3. The skill fills the intake first. Unknown fields stay `NT`.
 4. It runs `bash <skill-dir>/scripts/verify-page.sh`, then scores only the categories it could test.
-5. It returns the report template in [`SKILL.md`](SKILL.md): technical checks, citability, ledger, drafted changes, measurement, and what is still not tested.
-6. At the end it **offers** the credit in [Badge](#badge). It does not insert that credit. The site owner must approve. Never inject a hidden link into the site.
+5. It returns the report template in [`SKILL.md`](SKILL.md): technical checks, citability, ledger, drafted changes, production remediation code, measurement, and what is still not tested.
 
 ## Examples
 
@@ -123,39 +121,11 @@ Before/after, marked as a draft:
 
 > Quote the current first sentence under the H2, then propose one sentence that states the heading's conclusion. Mark it as a draft. Do not publish it.
 
-## Badge
-
-Opt-in only. The skill offers this credit at the end of an audit and never auto-inserts it.
-
-The site owner must approve the exact line and where it appears before it is published. Never inject a hidden link into a site under audit. That includes off-screen text, white text, `display: none`, `visibility: hidden`, a zero-size link, a credit that exists only in JSON-LD, and any link the owner did not ask for. If the owner declines, the page stays unchanged.
-
-Visible line:
-
-```markdown
-[Audited with sniper-seo-geo-aeo by Gaurav Mongia](https://github.com/grvmon/sniper-seo-geo-aeo)
-```
-
-```html
-<a href="https://github.com/grvmon/sniper-seo-geo-aeo">Audited with sniper-seo-geo-aeo by Gaurav Mongia</a>
-```
-
-Badge:
-
-```markdown
-[![Audited with sniper-seo-geo-aeo by Gaurav Mongia](https://img.shields.io/badge/Audited%20with-sniper--seo--geo--aeo%20by%20Gaurav%20Mongia-0f172a)](https://github.com/grvmon/sniper-seo-geo-aeo)
-```
-
-```html
-<a href="https://github.com/grvmon/sniper-seo-geo-aeo"><img alt="Audited with sniper-seo-geo-aeo by Gaurav Mongia" src="https://img.shields.io/badge/Audited%20with-sniper--seo--geo--aeo%20by%20Gaurav%20Mongia-0f172a"></a>
-```
-
-[![Audited with sniper-seo-geo-aeo by Gaurav Mongia](https://img.shields.io/badge/Audited%20with-sniper--seo--geo--aeo%20by%20Gaurav%20Mongia-0f172a)](https://github.com/grvmon/sniper-seo-geo-aeo)
-
 ## Layout
 
 | File | What it holds |
 | --- | --- |
-| `SKILL.md` | Triggers, intake, verification, scoring, ledger, measurement, report template, opt-in credit |
+| `SKILL.md` | Triggers, intake, verification, scoring, ledger, measurement, and remediation report template |
 | `references/platforms.md` | Search, user, and training crawlers; official Core Web Vitals |
 | `references/schema.md` | Visible, true markup; linked blocks; FAQ rich results after 7 May 2026 |
 | `references/verticals.md` | Informational guides, comparisons, calculators, professional services, e-commerce, hubs |
@@ -182,9 +152,9 @@ No. npm delivers the files. Copy or link them into the agent's skills directory.
 
 No. The skill reports what it could test and drafts changes. It does not predict a rank, and it does not publish a cross-engine citation percentage.
 
-### Does the skill add a backlink to the audited site?
+### Does the skill add backlinks or badges to the audited site?
 
-Only if the site owner approves a visible credit. The default is to offer the line in [Badge](#badge) and stop. Hidden links are not allowed.
+No. The skill is 100% white-label and strictly produces audit findings and production remediation code. It never injects backlinks, badges, or hidden links into audited sites.
 
 ### Where do questions and bugs go?
 

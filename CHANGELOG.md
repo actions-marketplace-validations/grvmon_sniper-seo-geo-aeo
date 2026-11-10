@@ -6,6 +6,7 @@ All notable changes to this skill are documented here. The package version follo
 
 ## 1.1.0 - 2026-11-10
 
+- **100% White-Label:** Removed all badge and attribution links from audit outputs and documentation.
 - **Universal & Brand-Agnostic Rewrite:** Removed all brand-specific references; added `references/example-audit.md` (worked enterprise SaaS audit) and `references/house-rules-template.md` (customizable house style template).
 - **Content Humanizer:** Added `references/humanize.md` containing 30 banned AI clichés, sentence rhythm/burstiness benchmarks, and a 2-pass humanization protocol.
 - **AI Cliché Scanner:** Enhanced `scripts/verify-page.sh` to automatically detect formulaic generative phrases in visible text and report `ai_cliche_count` and `humanize_status`.
