@@ -1,6 +1,6 @@
 # Page types & vertical search optimization
 
-Match the page layout, content structure, and technical schema to the specific job the search query asks the page to perform. Search engines rank pages that directly fulfill the user's intended format; forcing the wrong template onto a query leads to poor dwell time and ranking drops.
+Match the page layout, content structure, and technical schema to the specific job the search query asks the page to perform. A page that fits the format a query asks for is usually easier for readers to use and for engines to understand. These are editing guidelines, not documented ranking rules.
 
 A full worked audit demonstrating an enterprise page is in `example-audit.md`.
 
@@ -10,7 +10,7 @@ A full worked audit demonstrating an enterprise page is in `example-audit.md`.
 
 - **User Intent:** The user wants a comprehensive, reliable answer or technical explanation to solve a problem.
 - **Above-the-Fold Direct Answer:** Place an executive summary or standalone answer block immediately beneath the H1 or byline. It must directly answer the central question so answer engines (Google AI Overviews, Perplexity, ChatGPT) can extract it as a standalone passage.
-- **Information Gain:** Include proprietary analysis, original diagrams, benchmark data, or firsthand observations that do not exist on competitor pages.
+- **Information Gain (this skill's heuristic):** Include proprietary analysis, original diagrams, benchmark data, or firsthand observations that do not exist on competitor pages.
 - **Author Entity & E-E-A-T:** Visible byline linking to an author biography with verifiable credentials, professional links (`sameAs`), and an editorial review note.
 - **Schema:** Use `Article`, `TechArticle`, or `BlogPosting` within an `@graph` connected to `Person` (author) and `Organization` (publisher).
 
@@ -51,7 +51,7 @@ A full worked audit demonstrating an enterprise page is in `example-audit.md`.
 - **User Intent:** The user is researching or ready to buy a specific physical or digital product.
 - **On-Page Data Fidelity:** Price, currency, stock availability, and SKU/GTIN printed in visible text must match structured data exactly.
 - **Shipping & Returns:** Explicit links to visible delivery timeframes and refund policies.
-- **Faceted Navigation:** Ensure faceted filter URLs (color, size, sorting) canonicalize back to the primary canonical product URL to prevent duplicate content bloat.
+- **Faceted Navigation:** Decide how faceted filter URLs (color, size, sorting) are handled: canonicalize to the main URL, or keep crawlers out with robots.txt. Check Google's faceted navigation guidance before choosing.
 - **Schema:** Use `Product` and `Offer` with `price`, `priceCurrency`, `availability`, and `hasMerchantReturnPolicy`.
 
 ---
@@ -59,6 +59,6 @@ A full worked audit demonstrating an enterprise page is in `example-audit.md`.
 ## 6. Category, hub & topic listing pages
 
 - **User Intent:** The user wants to explore a cluster of related topics, tools, or products.
-- **Introductory Context:** 100–150 words of contextual framing incorporating primary topic entities and internal taxonomy links.
+- **Introductory Context:** A short original introduction that says what the hub covers and links to its main sub-topics. Length follows the topic; there is no required word count.
 - **Pagination & Indexation:** Sub-pages (`?page=2`) must self-canonicalize and link to previous/next items cleanly.
 - **Schema:** Use `CollectionPage` with `hasPart` pointing to member resources.

@@ -49,7 +49,7 @@ On informational, guide, or FAQ pages, specify house formatting for the direct a
 ## 4. Internal linking & interactive tools
 
 - **Tool & resource integration:** Require that each deep-dive guide links to at least one relevant proprietary calculator, tool, or interactive asset using its canonical URL (e.g., `https://example.com/tools/roi-calculator/`).
-- **Contextual anchor text:** Never use generic phrases like "click here" or "learn more"; use descriptive, keyword-rich anchor text that clearly identifies the target resource.
+- **Contextual anchor text:** Never use generic phrases like "click here" or "learn more"; use descriptive anchor text that clearly identifies the target resource.
 
 ---
 
