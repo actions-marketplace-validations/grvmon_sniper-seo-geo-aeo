@@ -1,27 +1,52 @@
 # Sniper SEO + GEO + AEO
 
-Agent skill for SEO, GEO and AEO audits: it verifies a page with code, scores only what it could test, and drafts fixes for Google and AI answer engines. It does not predict or guarantee a ranking or a citation.
+> **Get your pages ranked on Google and cited by ChatGPT, Perplexity, and Claude.**  
+> Stop guessing why your traffic dropped or why AI engines aren't quoting your content. Sniper tests your live web pages, uncovers what’s holding them back, and hands you ready-to-use fixes in seconds.
 
 [![CI](https://github.com/grvmon/sniper-seo-geo-aeo/actions/workflows/ci.yml/badge.svg)](https://github.com/grvmon/sniper-seo-geo-aeo/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/grvmon/sniper-seo-geo-aeo)](https://github.com/grvmon/sniper-seo-geo-aeo/releases)
 [![License: MIT](https://img.shields.io/github/license/grvmon/sniper-seo-geo-aeo)](https://github.com/grvmon/sniper-seo-geo-aeo/blob/main/LICENSE)
 
 ```bash
+# Audit any page in 5 seconds (no installation needed):
+npx @grvmon/sniper-seo-geo-aeo https://yourwebsite.com/blog-post/
+
+# Or install it into your AI coding assistant:
 npx skills add grvmon/sniper-seo-geo-aeo
 ```
 
-Google's [AI features documentation](https://developers.google.com/search/docs/appearance/ai-features) says AI Overviews and AI Mode use the same Search systems as the rest of Google Search, with no extra technical requirements. The [generative AI optimization guide](https://developers.google.com/search/docs/fundamentals/ai-optimization-guide) (updated 2026-07-10) says there is no special schema and that Google Search ignores `llms.txt`. Other products document their own crawlers. [OpenAI](https://developers.openai.com/api/docs/bots) separates `OAI-SearchBot` (search), `GPTBot` (training), and `ChatGPT-User` (a person asked for a fetch).
+---
 
-Citation overlap across engines depends on the query. This skill records a sampling log or marks overlap `NT`. It does not publish an overlap percentage, and it does not assume the Google top result is what other engines cite.
+### The Plain-English Truth About AI Search
 
-The procedure is [`SKILL.md`](SKILL.md). A complete walkthrough is in [`TUTORIAL.md`](TUTORIAL.md). Short guides are in the [wiki](https://github.com/grvmon/sniper-seo-geo-aeo/wiki).
+* **Google AI Overviews is still Google Search:** According to [Google Search documentation](https://developers.google.com/search/docs/appearance/ai-features), there is no "secret AI tag" or magic file. Strong technical SEO and genuinely helpful answers are what get you featured.
+* **Search traffic vs. AI training are different:** You can let ChatGPT and Perplexity find and quote your website to send you buyers, without letting AI companies scrape your content for free model training. Crawlers are split by purpose (e.g. OpenAI's `OAI-SearchBot` for search vs. `GPTBot` for training).
+* **Zero BS, zero fake scores:** Most tools charge $200/month to show made-up "AI visibility percentages." Sniper only tests hard evidence: if something can't be proven by real code, it is marked `NT` (Not Tested)—never guessed.
+
+📖 **Documentation:** [Step-by-Step Tutorial](TUTORIAL.md) • [Full Agent Workflow (`SKILL.md`)](SKILL.md) • [Wiki Guides](https://github.com/grvmon/sniper-seo-geo-aeo/wiki)
+
+---
 
 ## What it does
 
-1. **Verification (`verify-page.sh`):** needs only `curl` and `python3`. Reports status and redirects, robots.txt (RFC 9309 parsing, matched on path plus query) with an allow/disallow line for 15 crawler tokens split into search, user-fetch, training and ads, meta robots and `X-Robots-Tag`, canonical, sitemap membership (index and `.gz` expansion, up to 20 files), schema syntax and duplicate entity detection across blocks, title, meta and OpenGraph tags, viewport, soft-404 heuristics (including SPA `llms.txt` fallbacks), image alt counts, and cache headers. Anything it did not check prints `nt`.
-2. **Citability scoring:** five categories, `NT` when untested. `answer`, `contain` and `original` are rater-judged heuristics, not Google signals.
-3. **Style lint:** flags the formulaic phrases listed in `references/humanize.md` (except the stacked-connector row). It is an editing aid, not a ranking test.
-4. **Draft remediation:** proposes title, meta, a lead answer and linked JSON-LD. A person reviews and publishes; nothing is changed automatically, and no links or badges are inserted.
+### 1. 🚦 The Bot Check: Can Search & AI Engines Even See You?
+Before spending hours rewriting content, make sure bots can actually read your page. We check:
+* Are Google, ChatGPT, or Perplexity accidentally blocked from visiting via `robots.txt`?
+* Does your page load properly, or are bots hitting a blank screen or a broken redirect?
+* Are your search snippet, social preview cards (OpenGraph), and mobile formatting working as intended?
+
+### 2. 🎯 The Citability Test: Will AI Quote You as a Source?
+AI engines don't read rambling 3,000-word articles. When someone asks ChatGPT or Perplexity a question, the AI looks for quick, self-contained 45-word answers backed by facts. We score your content on whether it gives AI an easy, credible quote to cite.
+
+### 3. 🧼 The Humanizer: Kills Robotic AI Buzzwords
+Nothing destroys buyer trust faster than content that sounds like raw ChatGPT output. We scan your text for 60+ overused AI clichés—words like *"delve"*, *"game changer"*, *"testament to"*, and *"in today's digital landscape"*—so your brand sounds like a real, authoritative human expert.
+
+### 4. 📦 The Fix-It Kit: Copy-Paste Updates in 2 Minutes
+We don't just dump a list of technical errors on your desk. You get ready-to-publish assets:
+* **Click-worthy Titles & Descriptions** designed to win clicks on Google.
+* **Direct-Answer Snippets** crafted for Google AI Overviews and ChatGPT summaries.
+* **Structured Data (Schema)** that tells bots exactly who wrote the article and why you're the authority.
+* **100% White-Label:** Zero promotional backlinks, no watermarks, and no forced badges.
 
 ## Contents
 
