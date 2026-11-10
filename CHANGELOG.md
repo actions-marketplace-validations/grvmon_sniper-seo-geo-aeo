@@ -4,6 +4,9 @@ All notable changes to this skill are documented here. The package version follo
 
 ## Unreleased
 
+- Feat(distribution): added `"bin": { "sniper-seo": "./scripts/verify-page.sh" }` for direct CLI execution via `npx @grvmon/sniper-seo-geo-aeo`.
+- Feat(actions): added official GitHub Action definition (`action.yml`) for automated CI/CD page audits.
+- Feat(brew): added Homebrew formula template (`formula/sniper-seo.rb`).
 - Harden `scripts/verify-page.sh` and tests for static scanners: follow-up fetches use urllib (no subprocess), temp dirs are removed with a scoped cleanup instead of `rm -rf`, the Googlebot UA uses a full Chrome version string, and tests bind to `localhost` rather than a numeric loopback address.
 - Fix(llms.txt): detect SPA/catch-all servers returning HTML under HTTP 200 for `/llms.txt` and report `warn: soft_404 (returned html fallback)` instead of a false-positive valid status.
 - Feat(opengraph): extract `og:title`, `og:description`, and `og:image` and report `og_title_matches_title`.

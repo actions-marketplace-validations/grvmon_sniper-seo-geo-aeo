@@ -1,0 +1,37 @@
+name: 'Sniper SEO + GEO + AEO'
+description: 'Zero-hallucination page verification for Google Search, robots.txt, soft 404s, and AI answer engines.'
+author: 'Gaurav Mongia'
+branding:
+  icon: 'search'
+  color: 'green'
+
+inputs:
+  url:
+    description: 'The target web page URL to verify'
+    required: true
+  googlebot:
+    description: 'Emulate Googlebot Smartphone User-Agent (true/false)'
+    required: false
+    default: 'false'
+
+outputs:
+  output:
+    description: 'Raw verification evidence from verify-page.sh'
+    value: ${{ steps.verify.outputs.result }}
+
+runs:
+  using: 'composite'
+  steps:
+    - id: verify
+      shell: bash
+      run: |
+        FLAG=""
+        if [ "${{ inputs.googlebot }}" = "true" ]; then
+          FLAG="-g"
+        fi
+        OUT=$(bash "${{ github.action_path }}/scripts/verify-page.sh" $FLAG "${{ inputs.url }}")
+        echo "$OUT"
+        EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+        echo "result<<$EOF" >> "$GITHUB_OUTPUT"
+        echo "$OUT" >> "$GITHUB_OUTPUT"
+        echo "$EOF" >> "$GITHUB_OUTPUT"

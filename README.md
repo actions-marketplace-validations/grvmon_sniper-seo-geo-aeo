@@ -68,13 +68,37 @@ Search, user-triggered fetch, and training are different jobs. Leave every train
 
 ## Install
 
-The shortest path on most agents:
+### 1. Instant CLI Run via npx (No install required)
+
+Run verification directly in any terminal:
+
+```bash
+npx @grvmon/sniper-seo-geo-aeo 'https://example.com/guide/'
+# Or emulate Googlebot Smartphone User-Agent:
+npx @grvmon/sniper-seo-geo-aeo -g 'https://example.com/guide/'
+```
+
+### 2. Agent Skills Manager (`skills.sh`)
+
+The shortest path for AI agents:
 
 ```bash
 npx skills add grvmon/sniper-seo-geo-aeo
 ```
 
-### Google Antigravity and Gemini CLI
+### 3. GitHub Actions CI/CD Pipeline
+
+Add automated SEO/GEO verification to your deployment workflows:
+
+```yaml
+- name: SEO & AI Audit
+  uses: grvmon/sniper-seo-geo-aeo@main
+  with:
+    url: 'https://preview.example.com/page/'
+    googlebot: 'true'
+```
+
+### 4. Direct Agent Installation
 
 ```bash
 git clone https://github.com/grvmon/sniper-seo-geo-aeo.git ~/.gemini/skills/sniper-seo-geo-aeo
