@@ -4,19 +4,20 @@ All notable changes to this skill are documented here. The package version follo
 
 ## Unreleased
 
-- Answer blocks: standalone answer under the title, no plain-text label prefixes; clean `acceptedAnswer.text`. Script reports `first_p_label_prefix`, `schema_answer_texts`, and `schema_answer_label_prefix`.
-- E-E-A-T: prefer verifiable self-description over vague superlatives.
-- New `references/house-rules-template.md`: customizable house style template, not generic rules.
-- Universal brand-agnostic rewrite: replaced specific test references with `references/example-audit.md` and generalized vertical guidance.
-- Image SEO: script reports `img_count`, `img_missing_alt`, and `img_lazy_count`.
-- Title and meta snippet health: script reports `title_status` and `meta_description_status` against Google SERP display thresholds.
-- Production-ready remediation deliverable: copy-paste Title, Meta description, lead answer block, and connected JSON-LD Schema.
-- Googlebot Smartphone emulation: `verify-page.sh` accepts `-g` / `--googlebot` flag to fetch with official Googlebot Smartphone User-Agent.
-- Mobile-first indexation: script checks `<meta name="viewport">` and validates `width=device-width`.
-- Soft 404 detection: script flags 200 OK pages with missing/error text or thin content as `soft_404_suspect`.
-- Caching headers: script extracts `last_modified` and `etag` headers for crawl budget analysis.
-- Content Humanizer: new `references/humanize.md` with 30 banned AI clichés, rhythm/burstiness benchmarks, and 2-pass humanization protocol.
-- AI cliché scanner: `verify-page.sh` detects formulaic generative phrases in visible text and reports `ai_cliche_count` and `humanize_status`.
+## 1.1.0 - 2026-11-10
+
+- **Universal & Brand-Agnostic Rewrite:** Removed all brand-specific references; added `references/example-audit.md` (worked enterprise SaaS audit) and `references/house-rules-template.md` (customizable house style template).
+- **Content Humanizer:** Added `references/humanize.md` containing 30 banned AI clichés, sentence rhythm/burstiness benchmarks, and a 2-pass humanization protocol.
+- **AI Cliché Scanner:** Enhanced `scripts/verify-page.sh` to automatically detect formulaic generative phrases in visible text and report `ai_cliche_count` and `humanize_status`.
+- **Googlebot Smartphone Emulation:** `scripts/verify-page.sh` accepts `-g` / `--googlebot` to fetch pages using the official Googlebot Smartphone User-Agent.
+- **Mobile-First Indexing & Viewport Check:** Inspects `<meta name="viewport">` for `width=device-width` compliance to prevent mobile ranking demotions.
+- **Soft 404 Detection:** Detects deceptive HTTP 200 OK responses with error/missing text or thin boilerplate (< 25 words).
+- **Image SEO & CWV Asset Checks:** Audits total images, missing `alt` text, and lazy loading presence.
+- **Snippet Health & SERP Display:** Reports `title_status` (30–65 chars) and `meta_description_status` (70–160 chars) against Google SERP display cutoffs.
+- **Crawl Caching & Freshness:** Extracts `Last-Modified` and `ETag` headers for HTTP conditional crawl budget efficiency.
+- **Production-Ready Remediation Deliverable:** Reports now generate copy-paste Title, Meta description, AI lead answer block with CSS eyebrow, and connected Schema.org `@graph`.
+- **Answer blocks:** Standalone answer under the title, no plain-text label prefixes; clean `acceptedAnswer.text`. Script reports `first_p_label_prefix`, `schema_answer_texts`, and `schema_answer_label_prefix`.
+- **Automated Test Suite:** Expanded `tests/run.sh` to 32 automated fixture tests passing across Python 3.9 through 3.14.
 
 - verify-page.sh runs on Python 3.9+ (no backslash in f-string expressions).
 - robots.txt parsing follows RFC 9309: blank lines do not end a group, matching groups merge, BOM stripped, 4xx means allow all, sitemap URLs resolved.
