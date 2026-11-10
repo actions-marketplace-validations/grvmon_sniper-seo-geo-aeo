@@ -6,7 +6,12 @@ All notable changes to this skill are documented here. The package version follo
 
 - Docs: removed unsourced claims (mobile demotions, AI-phrase filters, "primary discriminators"); `answer`, `contain` and `original` are marked rater-judged.
 - Aligned remediation template with the checker: title 30-65 chars, meta 70-160 chars; removed the 40-60 word answer target; `sameAs` is left blank until verified.
-- humanize.md now says 19 phrases (not 30) and that the script scans a subset.
+- humanize.md now says 19 phrases (not 30).
+- Fix: robots rules are matched against path plus query string, so `Disallow: /*?sessionid=` now applies to URLs with that query (previously reported `allow`).
+- Added `canonical_status: warn` when no canonical is declared.
+- AI-phrase scanner now covers every phrase in humanize.md except the stacked-connector row.
+- Tests: 12 new fixtures (robots query, named-group override, case-insensitive tokens, `$` anchor, longest match, crawl-delay between agents, 5xx robots, missing canonical, extended phrases); `FIXTURE_ROBOTS` raw-body mode in the fixture server.
+- CI: shellcheck at warning level.
 - README: removed ranking promises and the "Page 1 = what is cited" claim; replaced the static test badge with the CI badge.
 - CHANGELOG 1.1.0 test-matrix note corrected to Python 3.9-3.13 (matches CI).
 

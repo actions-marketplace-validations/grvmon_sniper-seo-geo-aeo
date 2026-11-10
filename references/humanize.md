@@ -17,7 +17,7 @@ Use this guide when auditing, editing, or rewriting content for Google Search an
 
 ## 2. Phrases to cut (19 listed)
 
-Cut these phrases from pages, headings, and meta descriptions unless quoting a source. `verify-page.sh` scans only a subset of them.
+Cut these phrases from pages, headings, and meta descriptions unless quoting a source. `verify-page.sh` scans for every phrase in this table except the stacked "Furthermore / Moreover / Additionally" row, which needs paragraph context.
 
 | Category | Banned AI Cliché | Human Alternative |
 | :--- | :--- | :--- |

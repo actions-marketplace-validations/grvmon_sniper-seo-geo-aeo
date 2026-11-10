@@ -14,9 +14,9 @@ The procedure is [`SKILL.md`](SKILL.md). Short guides are in the [wiki](https://
 
 ## What it does
 
-1. **Verification (`verify-page.sh`):** needs only `curl` and `python3`. Reports status and redirects, robots.txt (RFC 9309 parsing), meta robots and `X-Robots-Tag`, canonical, sitemap membership (index and `.gz` expansion, up to 20 files), schema syntax, title and meta length, viewport, soft-404 heuristics, image alt counts, and cache headers. Anything it did not check prints `nt`.
+1. **Verification (`verify-page.sh`):** needs only `curl` and `python3`. Reports status and redirects, robots.txt (RFC 9309 parsing, matched on path plus query) with an allow/disallow line for 15 crawler tokens split into search, user-fetch, training and ads, meta robots and `X-Robots-Tag`, canonical, sitemap membership (index and `.gz` expansion, up to 20 files), schema syntax, title and meta length, viewport, soft-404 heuristics, image alt counts, and cache headers. Anything it did not check prints `nt`.
 2. **Citability scoring:** five categories, `NT` when untested. `answer`, `contain` and `original` are rater-judged heuristics, not Google signals.
-3. **Style lint:** flags a subset of formulaic phrases listed in `references/humanize.md`. It is an editing aid, not a ranking test.
+3. **Style lint:** flags the formulaic phrases listed in `references/humanize.md` (except the stacked-connector row). It is an editing aid, not a ranking test.
 4. **Draft remediation:** proposes title, meta, a lead answer and linked JSON-LD. A person reviews and publishes; nothing is changed automatically, and no links or badges are inserted.
 
 ## Contents
