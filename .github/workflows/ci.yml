@@ -20,6 +20,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python }}
+      - name: Shellcheck (warning level)
+        run: shellcheck -S warning scripts/verify-page.sh tests/run.sh
       - name: Compile embedded Python
         run: |
           sed -n "/<< 'PY'/,/^PY$/p" scripts/verify-page.sh | sed '1d;$d' > /tmp/vp.py
