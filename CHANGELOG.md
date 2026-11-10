@@ -2,7 +2,7 @@
 
 All notable changes to this skill are documented here. The package version follows [Semantic Versioning](https://semver.org/).
 
-## Unreleased
+## 1.2.0 - 2026-11-10
 
 - Docs: removed unsourced claims (mobile demotions, AI-phrase filters, "primary discriminators"); `answer`, `contain` and `original` are marked rater-judged.
 - Aligned remediation template with the checker: title 30-65 chars, meta 70-160 chars; removed the 40-60 word answer target; `sameAs` is left blank until verified.
