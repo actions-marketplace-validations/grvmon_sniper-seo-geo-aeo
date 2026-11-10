@@ -65,9 +65,9 @@ Then evaluate these checks. Each is `pass`, `fail`, or `NT`.
 4. **Sitemap.** The URL is in a sitemap declared from `robots.txt`. The script reads declared sitemaps, expands indexes, and unzips `.gz`, up to 20 files. Membership is `NT` when any file failed or the cap was hit.
 5. **Schema.** JSON-LD parses without syntax errors. Every value is visible on the page and true. `sameAs` URLs were opened and name the same entity. See `references/schema.md`.
 6. **Title & meta snippet health.** `title_status` checks length (30–65 chars optimal for Google SERP display without truncation). `meta_description_status` checks length (70–160 chars optimal).
-7. **Mobile-first & viewport.** Googlebot is 100% mobile-first. `viewport_status` checks presence of `<meta name="viewport" content="width=device-width, initial-scale=1">`. Missing viewport triggers mobile demotions.
-8. **Soft 404 detection.** `soft_404_suspect` flags 200 OK pages containing "not found / error" text or thin content (< 25 words) that Googlebot drops from index.
-9. **Content humanization & anti-AI cadence.** `humanize_status` scans visible text for formulaic AI clichés (*"in today's digital landscape"*, *"delve into"*, *"tapestry"*, *"testament to"*, *"pivotal role"*) that trigger Google's low-quality content filters. See `references/humanize.md`.
+7. **Mobile-first & viewport.** Google indexes the mobile version of a page. `viewport_status` checks for `width=device-width` in the viewport meta tag. A missing tag is a mobile usability risk; it is not a documented ranking penalty.
+8. **Soft 404 detection.** `soft_404_suspect` flags 200 OK pages containing "not found / error" text or thin content (< 25 words). Google describes soft 404s as error-like pages served with a 200; this check is a heuristic lead and can false-positive on stubs, so confirm in URL Inspection.
+9. **Content humanization & anti-AI cadence.** `humanize_status` scans visible text for formulaic AI clichés (*"in today's digital landscape"*, *"delve into"*, *"tapestry"*, *"testament to"*, *"pivotal role"*) so a human can edit them. This is a style lint, not a ranking test: Google does not document a filter for these phrases, and a hit is a prompt to review the sentence, not a failure. The script checks a subset of the phrases in `references/humanize.md`.
 10. **Image SEO.** The script reports `img_count`, `img_missing_alt`, and `img_lazy_count`. Images must include descriptive alt text and explicit aspect ratios to prevent CLS and rank in Google Images.
 11. **Crawl caching & freshness.** Reports `last_modified` and `etag` headers used by Googlebot for conditional HTTP 304 crawl budget savings.
 12. **Internal links and orphans.** Count same-host links on the page. An orphan is a sitemap URL with no internal link from the crawled set. Without that crawl, orphan status is `NT`.
@@ -85,7 +85,7 @@ On an informational guide or question page, place a standalone answer block dire
 
 ## 3. Experience, expertise, authoritativeness, trust & Information Gain
 
-E-E-A-T and Information Gain are the primary discriminators between top-ranked pages and dropped commodity rewrites. Google's systems give substantial weight to these qualities on all competitive queries ([helpful content](https://developers.google.com/search/docs/fundamentals/creating-helpful-content)).
+Google's helpful-content guidance asks whether a page shows first-hand experience, expertise, and original value rather than a rewrite of existing results ([helpful content](https://developers.google.com/search/docs/fundamentals/creating-helpful-content)). E-E-A-T is a quality framework, not a single ranking factor, and "Information Gain" here is this skill's own heuristic, not a documented Google signal. Treat the scores below as a review aid.
 
 Judge five visible attributes:
 
@@ -113,7 +113,7 @@ Two distinct outputs. Do not blend them into an arbitrary composite score.
 | **sourced** | 15 | `NT` if no claims; else `floor(10 × sourced / n + 0.5)` | Up to 8 claims stating a number, date, price, benchmark, or statute. Sourced means a primary document name, statute, or URL sits adjacent to the claim. |
 | **original** | 15 | 10, 5, or 0 | **10 (High Information Gain):** original data, proprietary calculation, benchmark, or first-hand observation absent from competitor pages. **5:** original worked example using a standard method. **0:** regurgitation of existing search results. |
 
-`NT` if that evidence was not collected. `original` is `NT` when competitor URLs were not opened. Do not turn `NT` into 0.
+`answer` and `contain` are rater-judged proxies, and `original` is a judgment against opened competitor pages. Scores are comparable across runs only when the same method is used. `NT` if that evidence was not collected. `original` is `NT` when competitor URLs were not opened. Do not turn `NT` into 0.
 
 ```
 raw = sum(points / 10 × weight) for tested categories
@@ -194,15 +194,15 @@ formula: floor(100 × raw / coverage + 0.5)
 
 ### A. Title & meta description
 ```html
-<title>[Optimized Title: 50-60 chars, front-loaded keyword, strong CTR hook]</title>
-<meta name="description" content="[Optimized Meta: 120-155 chars with clear value proposition and active voice]">
+<title>[Optimized Title: 30-65 chars, front-loaded keyword, accurate to the page]</title>
+<meta name="description" content="[Optimized Meta: 70-160 chars, accurate summary of the page]">
 ```
 
 ### B. Lead direct answer passage (for Google AI Overviews & Perplexity)
 ```html
 <section class="lead-summary-card">
   <p id="direct-answer">
-    <strong>[Eyebrow]</strong> [Standalone 40-60 word definitive answer starting with conclusion]
+    <strong>[Eyebrow]</strong> [Standalone answer that starts with the conclusion; length follows the question]
   </p>
 </section>
 ```
@@ -218,7 +218,7 @@ formula: floor(100 × raw / coverage + 0.5)
       "@id": "https://example.com/#organization",
       "name": "[Brand Name]",
       "url": "https://example.com/",
-      "sameAs": ["https://linkedin.com/company/[slug]"]
+      "sameAs": ["[add only after opening the profile and confirming it is the same entity; otherwise delete this line]"]
     },
     {
       "@type": "WebSite",
@@ -237,7 +237,7 @@ formula: floor(100 × raw / coverage + 0.5)
       "author": {
         "@type": "Person",
         "name": "[Author Name]",
-        "sameAs": "https://linkedin.com/in/[slug]"
+        "sameAs": "[add only after verifying; otherwise delete this line]"
       },
       "publisher": { "@id": "https://example.com/#organization" },
       "datePublished": "YYYY-MM-DD",

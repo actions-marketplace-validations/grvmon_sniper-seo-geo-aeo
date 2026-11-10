@@ -4,21 +4,27 @@ All notable changes to this skill are documented here. The package version follo
 
 ## Unreleased
 
+- Docs: removed unsourced claims (mobile demotions, AI-phrase filters, "primary discriminators"); `answer`, `contain` and `original` are marked rater-judged.
+- Aligned remediation template with the checker: title 30-65 chars, meta 70-160 chars; removed the 40-60 word answer target; `sameAs` is left blank until verified.
+- humanize.md now says 19 phrases (not 30) and that the script scans a subset.
+- README: removed ranking promises and the "Page 1 = what is cited" claim; replaced the static test badge with the CI badge.
+- CHANGELOG 1.1.0 test-matrix note corrected to Python 3.9-3.13 (matches CI).
+
 ## 1.1.0 - 2026-11-10
 
 - **100% White-Label:** Removed all badge and attribution links from audit outputs and documentation.
 - **Universal & Brand-Agnostic Rewrite:** Removed all brand-specific references; added `references/example-audit.md` (worked enterprise SaaS audit) and `references/house-rules-template.md` (customizable house style template).
-- **Content Humanizer:** Added `references/humanize.md` containing 30 banned AI clichés, sentence rhythm/burstiness benchmarks, and a 2-pass humanization protocol.
+- **Content Humanizer:** Added `references/humanize.md` containing 19 listed AI clichés, sentence rhythm/burstiness benchmarks, and a 2-pass humanization protocol.
 - **AI Cliché Scanner:** Enhanced `scripts/verify-page.sh` to automatically detect formulaic generative phrases in visible text and report `ai_cliche_count` and `humanize_status`.
 - **Googlebot Smartphone Emulation:** `scripts/verify-page.sh` accepts `-g` / `--googlebot` to fetch pages using the official Googlebot Smartphone User-Agent.
-- **Mobile-First Indexing & Viewport Check:** Inspects `<meta name="viewport">` for `width=device-width` compliance to prevent mobile ranking demotions.
+- **Mobile-First Indexing & Viewport Check:** Inspects `<meta name="viewport">` for `width=device-width` compliance to flag mobile usability risk.
 - **Soft 404 Detection:** Detects deceptive HTTP 200 OK responses with error/missing text or thin boilerplate (< 25 words).
 - **Image SEO & CWV Asset Checks:** Audits total images, missing `alt` text, and lazy loading presence.
 - **Snippet Health & SERP Display:** Reports `title_status` (30–65 chars) and `meta_description_status` (70–160 chars) against Google SERP display cutoffs.
 - **Crawl Caching & Freshness:** Extracts `Last-Modified` and `ETag` headers for HTTP conditional crawl budget efficiency.
 - **Production-Ready Remediation Deliverable:** Reports now generate copy-paste Title, Meta description, AI lead answer block with CSS eyebrow, and connected Schema.org `@graph`.
 - **Answer blocks:** Standalone answer under the title, no plain-text label prefixes; clean `acceptedAnswer.text`. Script reports `first_p_label_prefix`, `schema_answer_texts`, and `schema_answer_label_prefix`.
-- **Automated Test Suite:** Expanded `tests/run.sh` to 32 automated fixture tests passing across Python 3.9 through 3.14.
+- **Automated Test Suite:** Expanded `tests/run.sh` to 32 automated fixture tests passing; CI covers Python 3.9 through 3.13.
 
 - verify-page.sh runs on Python 3.9+ (no backslash in f-string expressions).
 - robots.txt parsing follows RFC 9309: blank lines do not end a group, matching groups merge, BOM stripped, 4xx means allow all, sitemap URLs resolved.

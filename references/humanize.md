@@ -1,6 +1,6 @@
 # Content humanization & anti-AI cadence for SEO
 
-Use this guide when auditing, editing, or rewriting content for Google Search and AI answer engines. Modern search algorithms (Google's Helpful Content System and NavBoost) and real human readers heavily penalize formulaic, generic AI-generated prose. High-ranking pages sound like they were written by an experienced human practitioner who respects the reader's time.
+Use this guide when auditing, editing, or rewriting content for Google Search and AI answer engines. Google's guidance rewards helpful, original, people-first content however it is produced, and it does not document a filter for specific phrases. Readers, however, abandon formulaic prose. Treat this guide as an editing standard for clarity, not as a ranking rule.
 
 ---
 
@@ -15,9 +15,9 @@ Use this guide when auditing, editing, or rewriting content for Google Search an
 
 ---
 
-## 2. The 30 banned AI clichés & chatbot phrases
+## 2. Phrases to cut (19 listed)
 
-Purge these phrases from all web pages, headings, and meta descriptions:
+Cut these phrases from pages, headings, and meta descriptions unless quoting a source. `verify-page.sh` scans only a subset of them.
 
 | Category | Banned AI Cliché | Human Alternative |
 | :--- | :--- | :--- |
@@ -62,7 +62,7 @@ Natural human writing exhibits high variance in sentence length. Compare these t
 When auditing or revising any page, execute this two-pass workflow:
 
 ### Pass 1: Cut & Ground
-1. Search for and delete all 30 banned AI cliché words listed above.
+1. Search for and delete the phrases listed above.
 2. Remove opening throat-clearing sentences from every section.
 3. Replace passive voice with active subject-verb-object constructions.
 4. Replace vague superlatives with dated numbers, benchmark repos, or statutory citations.

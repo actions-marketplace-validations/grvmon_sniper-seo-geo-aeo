@@ -1,64 +1,27 @@
 # Sniper SEO + GEO + AEO
 
-> **The zero-hallucination agent skill for modern search.** Audits, humanizes, and optimizes any web page so it ranks #1 on Google Search and gets cited by AI answer engines (Google AI Overviews, ChatGPT Search, Perplexity, Claude, and Copilot).
+Agent skill for SEO, GEO and AEO audits: it verifies a page with code, scores only what it could test, and drafts fixes for Google and AI answer engines. It does not predict or guarantee a ranking or a citation.
 
+[![CI](https://github.com/grvmon/sniper-seo-geo-aeo/actions/workflows/ci.yml/badge.svg)](https://github.com/grvmon/sniper-seo-geo-aeo/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/grvmon/sniper-seo-geo-aeo)](https://github.com/grvmon/sniper-seo-geo-aeo/releases)
 [![License: MIT](https://img.shields.io/github/license/grvmon/sniper-seo-geo-aeo)](https://github.com/grvmon/sniper-seo-geo-aeo/blob/main/LICENSE)
-[![Tests](https://img.shields.io/badge/tests-32%20passed-10b981)](https://github.com/grvmon/sniper-seo-geo-aeo)
-[![Topics](https://img.shields.io/badge/topics-seo%20%C2%B7%20geo%20%C2%B7%20aeo-0f172a)](https://github.com/grvmon/sniper-seo-geo-aeo)
 
-The full procedure is in [`SKILL.md`](SKILL.md). Short guides and walkthroughs sit in the [wiki](https://github.com/grvmon/sniper-seo-geo-aeo/wiki).
+Google's [AI features documentation](https://developers.google.com/search/docs/appearance/ai-features) says AI Overviews and AI Mode use the same Search systems as the rest of Google Search, with no extra technical requirements. The [generative AI optimization guide](https://developers.google.com/search/docs/fundamentals/ai-optimization-guide) (updated 2026-07-10) says there is no special schema and that Google Search ignores `llms.txt`. Other products document their own crawlers. [OpenAI](https://developers.openai.com/api/docs/bots) separates `OAI-SearchBot` (search), `GPTBot` (training), and `ChatGPT-User` (a person asked for a fetch).
 
----
+Citation overlap across engines depends on the query. This skill records a sampling log or marks overlap `NT`. It does not publish an overlap percentage, and it does not assume the Google top result is what other engines cite.
 
-## What is Sniper SEO + GEO + AEO?
+The procedure is [`SKILL.md`](SKILL.md). Short guides are in the [wiki](https://github.com/grvmon/sniper-seo-geo-aeo/wiki).
 
-In 2026, **traditional SEO, Generative Engine Optimization (GEO), and Answer Engine Optimization (AEO) have converged.** Google's [AI features documentation](https://developers.google.com/search/docs/appearance/ai-features) confirms that AI Overviews and AI Mode use the exact same underlying ranking systems as core Google Search. What Google ranks on Page 1 is precisely what LLM answer engines synthesize and cite.
+## What it does
 
-Most SEO tools still generate speculative reports filled with hallucinated scores, debunked word-count rules, and generic fluff. **Sniper is engineered differently:** it operates as a ruthless, evidence-backed quality engine that verifies ground truth via code, enforces Googlebot mobile-first standards, purges robotic AI writing patterns, and delivers **production-ready, copy-paste remediation deliverables.**
-
----
-
-## Core Capabilities: What the Skill Does
-
-```
- ┌─────────────────────────────────────────────────────────────────────────────┐
- │                         THE SNIPER AUDIT & RANKING ENGINE                   │
- ├───────────────────┬───────────────────┬───────────────────┬─────────────────┤
- │ 1. Deep Crawler   │ 2. Citability &   │ 3. Content        │ 4. Production   │
- │    Verification   │    Information    │    Humanizer      │    Remediation  │
- │                   │    Gain Engine    │    & Anti-AI      │    Deliverable  │
- ├───────────────────┼───────────────────┼───────────────────┼─────────────────┤
- │ • Googlebot Phone │ • 100-pt rubric   │ • 30 banned AI    │ • Copy-paste    │
- │   emulation (-g)  │ • Answer-first H2 │   clichés purged  │   Title & Meta  │
- │ • RFC 9309 robots │ • Pronoun context │ • Sentence        │ • CSS eyebrow   │
- │ • Viewport tag    │   (anaphora)      │   burstiness      │   lead answer   │
- │ • Soft 404 scan   │ • Original data / │ • Active voice    │ • Schema.org    │
- │ • Image SEO & CWV │   research bonus  │ • High fact-to-   │   @graph JSON-LD│
- │ • Last-Modified   │ • Evidence ledger │   token density   │ • White-label   │
- └───────────────────┴───────────────────┴───────────────────┴─────────────────┘
-```
-
-1. **Automated Technical Verification (`verify-page.sh`):** Runs locally with zero third-party dependencies (pure `curl` + `python3`). It tests 15 distinct crawler tokens, evaluates RFC 9309 robots rules, handles sitemap index & `.xml.gz` decompression up to 20 files, validates mobile viewports, flags Soft 404 de-indexing risks, and checks conditional HTTP 304 caching headers.
-2. **Citability & Information Gain Scoring:** Google's Helpful Content System penalizes commodity consensus rewrites. Sniper evaluates whether the page introduces **novel Information Gain** (proprietary benchmarks, original calculations, primary statutes) absent from competitor SERPs, scores anaphora resolution so AI bots don't quote dangling pronouns, and verifies heading conclusion lead-ins.
-3. **Built-In Content Humanizer:** Eliminates telltale generative AI phrases (*"in today's digital landscape"*, *"delve into"*, *"tapestry"*, *"crucial role"*). Enforces natural sentence burstiness—alternating punchy 4-word statements with nuanced explanations—to ensure content passes Google's quality filters and sounds like an experienced human practitioner.
-4. **100% White-Label Remediation Code:** Sniper doesn't just grade pages; it fixes them. Every audit concludes with copy-paste deliverables: snippet-optimized Title & Meta tags, AI lead answer block with CSS eyebrow, and unified Schema.org `@graph` JSON-LD.
-
----
-
-## Grounded Search Engine Facts
-
-- **Google Search & AI Overviews:** As documented in Google's [generative AI optimization guide](https://developers.google.com/search/docs/fundamentals/ai-optimization-guide) (updated 2026-07-10), there is no special schema for AI features and Google Search completely ignores `llms.txt`. Focus effort on first-hand content and technical indexability.
-- **Answer Engine Crawlers:** [OpenAI](https://developers.openai.com/api/docs/bots) separates `OAI-SearchBot` (search results) from `GPTBot` (foundation training) and `ChatGPT-User` (user fetches). Anthropic and Perplexity maintain distinct tokens for search vs. training. Sniper audits these independently.
-- **Evidence Over Hallucination:** Citation overlap across engines depends entirely on the specific query. This skill records frozen citation sampling logs or marks missing tools `NT` (Not Tested). It never invents ranking predictions or artificial overlap percentages.
-
----
+1. **Verification (`verify-page.sh`):** needs only `curl` and `python3`. Reports status and redirects, robots.txt (RFC 9309 parsing), meta robots and `X-Robots-Tag`, canonical, sitemap membership (index and `.gz` expansion, up to 20 files), schema syntax, title and meta length, viewport, soft-404 heuristics, image alt counts, and cache headers. Anything it did not check prints `nt`.
+2. **Citability scoring:** five categories, `NT` when untested. `answer`, `contain` and `original` are rater-judged heuristics, not Google signals.
+3. **Style lint:** flags a subset of formulaic phrases listed in `references/humanize.md`. It is an editing aid, not a ranking test.
+4. **Draft remediation:** proposes title, meta, a lead answer and linked JSON-LD. A person reviews and publishes; nothing is changed automatically, and no links or badges are inserted.
 
 ## Contents
 
-- [What is Sniper?](#what-is-sniper-seo--geo--aeo)
-- [Core Capabilities](#core-capabilities-what-the-skill-does)
-- [Grounded Search Engine Facts](#grounded-search-engine-facts)
+- [What it does](#what-it-does)
 - [Features](#features)
 - [Supported engines](#supported-engines)
 - [Install](#install)
@@ -74,7 +37,7 @@ Most SEO tools still generate speculative reports filled with hallucinated score
 - Intake before any recommendation: URL, market, target query, SERP intent format match, competitors the owner names, access, baseline, and a per-bot training choice.
 - `scripts/verify-page.sh` fetches status, redirects, robots, canonical, sitemap, schema, title/meta snippet health, mobile viewport, soft 404 detection, content humanization (AI cliché scanner), image SEO, and outlinks. Supports `-g` / `--googlebot` for Googlebot Smartphone emulation.
 - Technical checks stay `pass`, `fail`, or `NT`. A missing `index, follow` meta is not a failure.
-- Content humanization & anti-AI cadence: purges 30 banned AI clichés, enforces sentence burstiness, and boosts fact-to-token density to satisfy Google's Helpful Content System.
+- Content humanization & anti-AI cadence: flags formulaic phrases (a style lint, not a ranking test) and gives editing guidance on sentence rhythm and specificity.
 - Citability score from five tested categories: Answer, Contain, Structure, Sourced, and Information Gain (Originality). Categories you did not test stay `NT` and are not turned into zero. `overall` is `NT` when coverage is under 60.
 - An evidence ledger. A number with no row is dropped.
 - Production-ready remediation deliverables: copy-paste Title, Meta description, lead direct answer snippet, and connected Schema.org `@graph`.
@@ -173,7 +136,7 @@ Before/after, marked as a draft:
 | `references/platforms.md` | Search, user, and training crawlers; official Core Web Vitals |
 | `references/schema.md` | Visible, true markup; linked blocks; FAQ rich results after 7 May 2026 |
 | `references/verticals.md` | Informational guides, comparisons, calculators, professional services, e-commerce, hubs |
-| `references/humanize.md` | Content humanization, anti-AI cadence, 30 banned clichés, and sentence burstiness rules |
+| `references/humanize.md` | Content humanization, anti-AI cadence, phrases to cut, and sentence rhythm rules |
 | `references/example-audit.md` | Worked audit of a live page. Copy its shape and remediation output. |
 | `references/house-rules-template.md` | Customizable template for brand conventions, lead answer styling, and regulatory disclosures. |
 | `scripts/verify-page.sh` | Executable fetch of status, robots, canonical, sitemap, schema, title/meta, images, and outlinks |

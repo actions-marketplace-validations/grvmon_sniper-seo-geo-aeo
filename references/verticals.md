@@ -9,7 +9,7 @@ A full worked audit demonstrating an enterprise page is in `example-audit.md`.
 ## 1. Informational guide & deep-dive article
 
 - **User Intent:** The user wants a comprehensive, reliable answer or technical explanation to solve a problem.
-- **Above-the-Fold Direct Answer:** Place an executive summary or standalone answer block (40–60 words) immediately beneath the H1 or byline. It must directly answer the central question so answer engines (Google AI Overviews, Perplexity, ChatGPT) can extract it as a standalone passage.
+- **Above-the-Fold Direct Answer:** Place an executive summary or standalone answer block immediately beneath the H1 or byline. It must directly answer the central question so answer engines (Google AI Overviews, Perplexity, ChatGPT) can extract it as a standalone passage.
 - **Information Gain:** Include proprietary analysis, original diagrams, benchmark data, or firsthand observations that do not exist on competitor pages.
 - **Author Entity & E-E-A-T:** Visible byline linking to an author biography with verifiable credentials, professional links (`sameAs`), and an editorial review note.
 - **Schema:** Use `Article`, `TechArticle`, or `BlogPosting` within an `@graph` connected to `Person` (author) and `Organization` (publisher).
