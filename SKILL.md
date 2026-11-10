@@ -14,7 +14,7 @@ description: >
 
 Google's AI Overviews and AI Mode use standard Google Search ranking systems. There is no secret file, schema type, or word count required to appear in them; pages must rank organically, satisfy search intent, and provide high Information Gain to be cited. Other answer engines (ChatGPT, Perplexity, Claude) publish and maintain their own crawlers. Record what you fetched, score only tested facts, and leave everything else as `NT` (not tested).
 
-Read `references/platforms.md` for crawlers and Core Web Vitals, `references/schema.md` when reviewing or generating structured data, and `references/verticals.md` for page types. A complete worked audit is in `references/example-audit.md`. A site-specific house rules template is in `references/house-rules-template.md`.
+Read `references/platforms.md` for crawlers and Core Web Vitals, `references/schema.md` when reviewing or generating structured data, `references/verticals.md` for page types, and `references/humanize.md` for content humanization and anti-AI cadence. A complete worked audit is in `references/example-audit.md`. A site-specific house rules template is in `references/house-rules-template.md`.
 
 ## Sources to follow
 
@@ -67,9 +67,10 @@ Then evaluate these checks. Each is `pass`, `fail`, or `NT`.
 6. **Title & meta snippet health.** `title_status` checks length (30–65 chars optimal for Google SERP display without truncation). `meta_description_status` checks length (70–160 chars optimal).
 7. **Mobile-first & viewport.** Googlebot is 100% mobile-first. `viewport_status` checks presence of `<meta name="viewport" content="width=device-width, initial-scale=1">`. Missing viewport triggers mobile demotions.
 8. **Soft 404 detection.** `soft_404_suspect` flags 200 OK pages containing "not found / error" text or thin content (< 25 words) that Googlebot drops from index.
-9. **Image SEO.** The script reports `img_count`, `img_missing_alt`, and `img_lazy_count`. Images must include descriptive alt text and explicit aspect ratios to prevent CLS and rank in Google Images.
-10. **Crawl caching & freshness.** Reports `last_modified` and `etag` headers used by Googlebot for conditional HTTP 304 crawl budget savings.
-11. **Internal links and orphans.** Count same-host links on the page. An orphan is a sitemap URL with no internal link from the crawled set. Without that crawl, orphan status is `NT`.
+9. **Content humanization & anti-AI cadence.** `humanize_status` scans visible text for formulaic AI clichés (*"in today's digital landscape"*, *"delve into"*, *"tapestry"*, *"testament to"*, *"pivotal role"*) that trigger Google's low-quality content filters. See `references/humanize.md`.
+10. **Image SEO.** The script reports `img_count`, `img_missing_alt`, and `img_lazy_count`. Images must include descriptive alt text and explicit aspect ratios to prevent CLS and rank in Google Images.
+11. **Crawl caching & freshness.** Reports `last_modified` and `etag` headers used by Googlebot for conditional HTTP 304 crawl budget savings.
+12. **Internal links and orphans.** Count same-host links on the page. An orphan is a sitemap URL with no internal link from the crawled set. Without that crawl, orphan status is `NT`.
 
 A site's own house style, if any, lives in a separate reference file and is applied only to that site. See `references/house-rules-template.md`.
 
@@ -89,6 +90,7 @@ E-E-A-T and Information Gain are the primary discriminators between top-ranked p
 Judge five visible attributes:
 
 - **First-hand experience & Information Gain.** The page presents original research, proprietary datasets, hands-on testing photos/observations, or unique tools absent from competitor SERP results.
+- **Natural human cadence & burstiness.** Zero robotic AI clichés. Vary sentence length (mix short 4-word declarations with analytical sentences), use active voice, and maintain high fact-to-token density. See `references/humanize.md`.
 - **Author entity & expertise.** A visible byline with credentials linking to an author profile page with verifiable external entity profiles (`sameAs` with LinkedIn, GitHub, ORCID, or official directory).
 - **Qualified review.** Legal, tax, engineering, or medical claims cite a qualified reviewer, or the page carries a prominent disclaimer stating it is not professional advice.
 - **Primary source evidence.** Numerical figures, dates, prices, or statutory citations link directly to primary institutional or government documents. Paraphrasing third-party summaries is penalised.
@@ -163,6 +165,7 @@ URL, market, target query, SERP intent format match, competitors, access, baseli
 | Title & meta snippet health | pass / warn / fail | |
 | Viewport / Mobile-first | pass / warn / fail | |
 | Soft 404 check | pass / suspect | |
+| Content humanization / AI clichés | pass / warn | |
 | Image SEO & alt tags | pass / warn / fail | |
 | Internal links / orphans | pass / fail / NT | |
 

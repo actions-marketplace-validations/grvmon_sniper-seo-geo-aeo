@@ -412,6 +412,20 @@ print(f"soft_404_suspect: {'yes' if is_soft_404 else 'no'}")
 print(f"last_modified: {last_modified}")
 print(f"etag: {etag}")
 print(f"user_agent: {'googlebot_smartphone' if 'Googlebot' in ua else 'default'}")
+
+AI_CLICHE_RX = re.compile(
+    r"\b(in today's (fast-paced|ever-evolving|digital)|delve into|delving into|a tapestry of|a testament to|beacon of|crucial role|pivotal role|harness the power of|unleash the potential of|game-changer|nestled in the heart of|embark on a journey)\b",
+    re.I
+)
+ai_cliches = [m.group(0).lower() for m in AI_CLICHE_RX.finditer(text)]
+print(f"ai_cliche_count: {len(ai_cliches)}")
+if ai_cliches:
+    uniq_cliches = sorted(set(ai_cliches))
+    print(f"ai_cliche_matches: {', '.join(uniq_cliches[:5])}")
+    print(f"humanize_status: warn: {len(ai_cliches)} AI cliché phrase(s) detected")
+else:
+    print("humanize_status: pass")
+
 print("browser_render: nt")
 print("rendered_html: nt")
 

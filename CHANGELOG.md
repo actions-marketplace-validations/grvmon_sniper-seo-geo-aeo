@@ -15,6 +15,8 @@ All notable changes to this skill are documented here. The package version follo
 - Mobile-first indexation: script checks `<meta name="viewport">` and validates `width=device-width`.
 - Soft 404 detection: script flags 200 OK pages with missing/error text or thin content as `soft_404_suspect`.
 - Caching headers: script extracts `last_modified` and `etag` headers for crawl budget analysis.
+- Content Humanizer: new `references/humanize.md` with 30 banned AI clichés, rhythm/burstiness benchmarks, and 2-pass humanization protocol.
+- AI cliché scanner: `verify-page.sh` detects formulaic generative phrases in visible text and reports `ai_cliche_count` and `humanize_status`.
 
 - verify-page.sh runs on Python 3.9+ (no backslash in f-string expressions).
 - robots.txt parsing follows RFC 9309: blank lines do not end a group, matching groups merge, BOM stripped, 4xx means allow all, sitemap URLs resolved.

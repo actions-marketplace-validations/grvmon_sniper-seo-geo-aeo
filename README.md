@@ -29,8 +29,9 @@ The procedure is [`SKILL.md`](SKILL.md). Short guides are in the [wiki](https://
 ## Features
 
 - Intake before any recommendation: URL, market, target query, SERP intent format match, competitors the owner names, access, baseline, and a per-bot training choice.
-- `scripts/verify-page.sh` fetches status, redirects, robots, canonical, sitemap, schema, title/meta snippet health, mobile viewport, soft 404 detection, image SEO, and outlinks. Supports `-g` / `--googlebot` for Googlebot Smartphone emulation.
+- `scripts/verify-page.sh` fetches status, redirects, robots, canonical, sitemap, schema, title/meta snippet health, mobile viewport, soft 404 detection, content humanization (AI cliché scanner), image SEO, and outlinks. Supports `-g` / `--googlebot` for Googlebot Smartphone emulation.
 - Technical checks stay `pass`, `fail`, or `NT`. A missing `index, follow` meta is not a failure.
+- Content humanization & anti-AI cadence: purges 30 banned AI clichés, enforces sentence burstiness, and boosts fact-to-token density to satisfy Google's Helpful Content System.
 - Citability score from five tested categories: Answer, Contain, Structure, Sourced, and Information Gain (Originality). Categories you did not test stay `NT` and are not turned into zero. `overall` is `NT` when coverage is under 60.
 - An evidence ledger. A number with no row is dropped.
 - Production-ready remediation deliverables: copy-paste Title, Meta description, lead direct answer snippet, and connected Schema.org `@graph`.
@@ -158,6 +159,7 @@ Badge:
 | `references/platforms.md` | Search, user, and training crawlers; official Core Web Vitals |
 | `references/schema.md` | Visible, true markup; linked blocks; FAQ rich results after 7 May 2026 |
 | `references/verticals.md` | Informational guides, comparisons, calculators, professional services, e-commerce, hubs |
+| `references/humanize.md` | Content humanization, anti-AI cadence, 30 banned clichés, and sentence burstiness rules |
 | `references/example-audit.md` | Worked audit of a live page. Copy its shape and remediation output. |
 | `references/house-rules-template.md` | Customizable template for brand conventions, lead answer styling, and regulatory disclosures. |
 | `scripts/verify-page.sh` | Executable fetch of status, robots, canonical, sitemap, schema, title/meta, images, and outlinks |

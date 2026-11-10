@@ -47,6 +47,7 @@ scenario x "/canq?a=1" "canonical with same query matches" '^canonical_matches_f
 scenario x /img "image and title/meta checks" '^img_count: 2' '^img_missing_alt: 1' '^img_lazy_count: 1' '^title_status: pass' '^meta_description_status: pass'
 scenario x /viewport "viewport tag passes" '^viewport: width=device-width' '^viewport_status: pass'
 scenario x /soft404 "soft 404 flagged on 200 page" '^soft_404_suspect: yes'
+scenario x /aicliche "ai cliche detected" '^ai_cliche_count: 3' '^humanize_status: warn: 3 AI cliché phrase\(s\) detected'
 
 # test googlebot smartphone flag
 pf="$(mktemp)"; rm -f "$pf"

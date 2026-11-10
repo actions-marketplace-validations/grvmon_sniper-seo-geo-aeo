@@ -79,6 +79,8 @@ class H(http.server.BaseHTTPRequestHandler):
             return self.send(200, '<html><head><title>Viewport Test Page Title Above Thirty</title><meta name="viewport" content="width=device-width, initial-scale=1"></head><body><h1>Title</h1><p>Sample body text paragraph with more than twenty words to test viewport status accurately.</p></body></html>')
         if p == "/soft404":
             return self.send(200, '<html><head><title>404 Page Not Found</title></head><body><h1>Error</h1><p>We could not find the page you were looking for.</p></body></html>')
+        if p == "/aicliche":
+            return self.send(200, "<html><head><title>AI Test Page Title Long Enough Here</title></head><body><h1>Guide</h1><p>In today's fast-paced digital landscape, it is a crucial role to delve into data pipelines.</p></body></html>")
         if p.startswith("/canq"):
             return self.send(200, PAGE % '<link rel="canonical" href="/canq?a=1">')
         return self.send(200, PAGE % "")
