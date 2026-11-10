@@ -10,6 +10,10 @@
 
 This repository is an agent skill: instructions, examples, and a package publish workflow. It does not run a service and it does not collect data.
 
+`scripts/verify-page.sh` is a read-only auditor. It accepts only `http://` or `https://` URLs, fetches the page plus robots.txt, declared sitemaps, and `/llms.txt`, and writes responses only into a `mktemp` directory that is deleted on exit. It does not read secrets or credentials, does not touch `$HOME`, `/etc`, or `~/.ssh`, does not execute downloaded content, and does not pipe `curl` into a shell.
+
+`tests/run.sh` starts a local fixture server and points the auditor at it. Tests use temporary directories only; they do not read or write `$HOME`, `/etc`, or `~/.ssh`.
+
 Report a problem if you find:
 
 - An instruction that would leak secrets, credentials, or private user data

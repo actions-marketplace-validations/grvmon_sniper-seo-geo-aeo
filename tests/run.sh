@@ -10,10 +10,10 @@ bad() { FAIL=$((FAIL+1)); echo "FAIL $1"; [[ -n "${2:-}" ]] && echo "$2" | sed '
 # scenario MODE PATH NAME REGEX...  (every regex must match a line of output)
 scenario() {
   local mode="$1" path="$2" name="$3"; shift 3
-  local pf; pf="$(mktemp)"; rm -f "$pf"
+  local pf; pf="$(mktemp)"
   python3 "$DIR/tests/fixture_server.py" "$mode" "$pf" & local pid=$!
   for _ in $(seq 50); do [[ -s "$pf" ]] && break; sleep 0.1; done
-  local out; out="$(bash "$VP" "http://127.0.0.1:$(cat "$pf")$path" 2>&1)"; local rc=$?
+  local out; out="$(bash "$VP" "http://localhost:$(cat "$pf")$path" 2>&1)"; local rc=$?
   kill "$pid" 2>/dev/null; wait "$pid" 2>/dev/null; rm -f "$pf"
   [[ $rc -eq 0 ]] || { bad "$name (exit $rc)" "$out"; return; }
   for re in "$@"; do
@@ -107,10 +107,10 @@ then ok "docs: weights, example arithmetic and char counts are consistent"
 else bad "docs consistency check failed" "$doc_out"; fi
 
 # test googlebot smartphone flag
-pf="$(mktemp)"; rm -f "$pf"
+pf="$(mktemp)"
 python3 "$DIR/tests/fixture_server.py" "x" "$pf" & pid=$!
 for _ in $(seq 50); do [[ -s "$pf" ]] && break; sleep 0.1; done
-out="$(bash "$VP" -g "http://127.0.0.1:$(cat "$pf")/page" 2>&1)"
+out="$(bash "$VP" -g "http://localhost:$(cat "$pf")/page" 2>&1)"
 kill "$pid" 2>/dev/null; wait "$pid" 2>/dev/null; rm -f "$pf"
 if grep -q '^user_agent: googlebot_smartphone' <<<"$out"; then
   ok "googlebot flag emulates googlebot smartphone"
@@ -119,7 +119,7 @@ else
 fi
 
 # usage errors
-for args in "" "file:///etc/passwd" "a b"; do
+for args in "" "file://localhost/not-a-page" "a b"; do
   # shellcheck disable=SC2086
   bash "$VP" $args >/dev/null 2>&1; rc=$?
   [[ $rc -eq 2 ]] && ok "exit 2 for args '$args'" || bad "exit $rc (want 2) for args '$args'"

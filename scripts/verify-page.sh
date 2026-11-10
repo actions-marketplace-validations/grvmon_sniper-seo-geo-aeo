@@ -40,10 +40,20 @@ for bin in curl python3; do
   command -v "$bin" >/dev/null 2>&1 || { echo "missing_dependency: $bin" >&2; exit 2; }
 done
 
-TMP="$(mktemp -d)"
-trap 'rm -rf "$TMP"' EXIT
+TMP="$(mktemp -d "${TMPDIR:-/tmp}/sniper-verify.XXXXXX")"
+cleanup() {
+  if [[ -n "${TMP:-}" && -d "$TMP" ]]; then
+    case "$TMP" in
+      /tmp/sniper-verify.*|"${TMPDIR:-/tmp}"/sniper-verify.*)
+        find "$TMP" -mindepth 1 -delete
+        rmdir "$TMP" 2>/dev/null || true
+        ;;
+    esac
+  fi
+}
+trap cleanup EXIT
 if [[ "$USE_GOOGLEBOT" -eq 1 ]]; then
-  UA="Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Mobile Safari/537.36 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)"
+  UA="Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.6778.139 Mobile Safari/537.36 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)"
 else
   UA="verify-page/1.0 (+https://github.com/grvmon/sniper-seo-geo-aeo)"
 fi
@@ -57,7 +67,7 @@ if ! curl -sS -L --proto =http,https --proto-redir =http,https --max-redirs 5 --
 fi
 
 python3 - "$URL" "$TMP" "$UA" << 'PY'
-import json, re, sys, html, subprocess, gzip, io
+import json, re, sys, html, gzip, io, urllib.error, urllib.request
 from collections import defaultdict
 from html.parser import HTMLParser
 from urllib.parse import urljoin, urlparse
@@ -68,26 +78,43 @@ final_url, status, redirects = meta[0], meta[1], meta[2]
 body = open(f"{tmp}/body", encoding="utf-8", errors="replace").read()
 raw_headers = open(f"{tmp}/headers", encoding="utf-8", errors="replace").read()
 
-def curl_split(url, binary=False):
+class _SafeRedirect(urllib.request.HTTPRedirectHandler):
+    max_redirections = 5
+
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        if urlparse(newurl).scheme not in ("http", "https"):
+            raise urllib.error.URLError(f"redirect to unsupported scheme: {urlparse(newurl).scheme}")
+        return super().redirect_request(req, fp, code, msg, headers, newurl)
+
+def fetch_url(url, binary=False):
     """Return (status, headers_text, body). status is the last hop, or error:reason."""
-    import os, tempfile
-    hd = tempfile.NamedTemporaryFile(delete=False)
-    bd = tempfile.NamedTemporaryFile(delete=False)
-    hd.close(); bd.close()
+    empty = b"" if binary else ""
+    if urlparse(url).scheme not in ("http", "https"):
+        return "error: unsupported scheme", "", empty
+    def _headers(hdr):
+        if not hdr:
+            return ""
+        return "".join(f"{k}: {v}\n" for k, v in hdr.items())
+    def _body(data):
+        if data is None:
+            return empty
+        if binary:
+            return data if isinstance(data, (bytes, bytearray)) else data.encode("utf-8", "replace")
+        return data.decode("utf-8", "replace") if isinstance(data, (bytes, bytearray)) else data
     try:
-        p = subprocess.run(
-            ["curl", "-sS", "-L", "--proto", "=http,https", "--proto-redir", "=http,https", "--max-redirs", "5", "--max-time", "30", "-A", ua,
-             "-D", hd.name, "-o", bd.name, "-w", "%{http_code}", url],
-            capture_output=True, text=True, encoding="utf-8", errors="replace",
-        )
-        headers = open(hd.name, encoding="utf-8", errors="replace").read()
-        data = open(bd.name, "rb").read() if binary else open(bd.name, encoding="utf-8", errors="replace").read()
-        if p.returncode != 0:
-            err = (p.stderr or "curl failed").strip().replace("\n", " ")[:180]
-            return f"error: {err}", "", (b"" if binary else "")
-        return p.stdout.strip(), headers, data
-    finally:
-        os.unlink(hd.name); os.unlink(bd.name)
+        req = urllib.request.Request(url, headers={"User-Agent": ua})
+        opener = urllib.request.build_opener(_SafeRedirect)
+        with opener.open(req, timeout=30) as resp:
+            return str(resp.getcode()), _headers(resp.headers), _body(resp.read())
+    except urllib.error.HTTPError as e:
+        try:
+            data = e.read()
+        except Exception:
+            data = b""
+        return str(e.code), _headers(e.headers), _body(data)
+    except Exception as e:
+        err = str(e).replace("\n", " ")[:180]
+        return f"error: {err}", "", empty
 
 blocks = re.split(r"\r?\n\r?\n", raw_headers)
 hops = []  # (status, [header lines])
@@ -346,7 +373,7 @@ for i, c in enumerate(page.canonical, 1):
     print(f"canonical_{i}: {abs_c}")
 if len(canon_unique) == 1:
     abs_c = canon_unique[0]
-    c_status, _, _ = curl_split(abs_c)
+    c_status, _, _ = fetch_url(abs_c)
     print(f"canonical_fetch_status: {c_status}")
     print(f"canonical_matches_final: {'yes' if norm(abs_c) == norm(final_url) else 'no'}")
     print(f"canonical_differs: {canonical_diff(abs_c, final_url)}")
@@ -526,7 +553,7 @@ for i, para in enumerate(page.paras[:8], 1):
 
 # robots.txt
 origin = f"{urlparse(final_url).scheme}://{urlparse(final_url).netloc}"
-robots_status, _, robots_body = curl_split(urljoin(origin, "/robots.txt"))
+robots_status, _, robots_body = fetch_url(urljoin(origin, "/robots.txt"))
 print(f"robots_txt_status: {robots_status}")
 
 class Group:
@@ -646,7 +673,7 @@ else:
             print(f"sitemap_note: stopped at {MAX_FILES} files")
             break
         seen.add(sm); fetched += 1
-        sm_status, _, raw = curl_split(sm, binary=True)
+        sm_status, _, raw = fetch_url(sm, binary=True)
         if raw[:2] == b"\x1f\x8b":
             try:
                 raw = gzip.GzipFile(fileobj=io.BytesIO(raw)).read(MAX_BYTES + 1)
@@ -672,7 +699,7 @@ else:
         print(f"in_sitemap: {'nt' if incomplete else 'no'}")
 
 print("orphan_check: nt")
-llms_status, llms_hdr, llms_body = curl_split(urljoin(origin, "/llms.txt"))
+llms_status, llms_hdr, llms_body = fetch_url(urljoin(origin, "/llms.txt"))
 is_html = "text/html" in llms_hdr.lower() or llms_body.lstrip().lower().startswith(("<!doctype", "<html"))
 if llms_status == "200" and is_html:
     print("llms_txt_status: warn: soft_404 (returned html fallback)")

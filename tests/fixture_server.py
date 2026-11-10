@@ -103,6 +103,6 @@ class H(http.server.BaseHTTPRequestHandler):
         return self.send(200, PAGE % "")
 
 
-srv = http.server.HTTPServer(("127.0.0.1", 0), H)
+srv = http.server.HTTPServer(("localhost", 0), H)
 open(PORTFILE, "w").write(str(srv.server_address[1]))
 srv.serve_forever()
