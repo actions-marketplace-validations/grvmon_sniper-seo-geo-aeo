@@ -75,6 +75,10 @@ class H(http.server.BaseHTTPRequestHandler):
             return self.send(404, PAGE % "")
         if p == "/img":
             return self.send(200, '<html><head><title>Full Complete Title Between Thirty And Sixty-Five Characters</title><meta name="description" content="A comprehensive descriptive meta snippet designed to exceed seventy characters in total length for verification."></head><body><h1>Title</h1><p>Content</p><img src="/a.jpg" alt="Photo"><img src="/b.jpg" loading="lazy"></body></html>')
+        if p == "/viewport":
+            return self.send(200, '<html><head><title>Viewport Test Page Title Above Thirty</title><meta name="viewport" content="width=device-width, initial-scale=1"></head><body><h1>Title</h1><p>Sample body text paragraph with more than twenty words to test viewport status accurately.</p></body></html>')
+        if p == "/soft404":
+            return self.send(200, '<html><head><title>404 Page Not Found</title></head><body><h1>Error</h1><p>We could not find the page you were looking for.</p></body></html>')
         if p.startswith("/canq"):
             return self.send(200, PAGE % '<link rel="canonical" href="/canq?a=1">')
         return self.send(200, PAGE % "")

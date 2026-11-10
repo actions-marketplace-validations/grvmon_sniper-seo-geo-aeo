@@ -11,6 +11,10 @@ All notable changes to this skill are documented here. The package version follo
 - Image SEO: script reports `img_count`, `img_missing_alt`, and `img_lazy_count`.
 - Title and meta snippet health: script reports `title_status` and `meta_description_status` against Google SERP display thresholds.
 - Production-ready remediation deliverable: copy-paste Title, Meta description, lead answer block, and connected JSON-LD Schema.
+- Googlebot Smartphone emulation: `verify-page.sh` accepts `-g` / `--googlebot` flag to fetch with official Googlebot Smartphone User-Agent.
+- Mobile-first indexation: script checks `<meta name="viewport">` and validates `width=device-width`.
+- Soft 404 detection: script flags 200 OK pages with missing/error text or thin content as `soft_404_suspect`.
+- Caching headers: script extracts `last_modified` and `etag` headers for crawl budget analysis.
 
 - verify-page.sh runs on Python 3.9+ (no backslash in f-string expressions).
 - robots.txt parsing follows RFC 9309: blank lines do not end a group, matching groups merge, BOM stripped, 4xx means allow all, sitemap URLs resolved.

@@ -3,22 +3,50 @@
 # Exit 0 after a response is saved. Exit 2 on usage or network failure.
 set -euo pipefail
 
-if [[ "${1:-}" == "-h" || "${1:-}" == "--help" || $# -ne 1 ]]; then
-  echo "usage: verify-page.sh URL" >&2
+USE_GOOGLEBOT=0
+URL=""
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    -h|--help)
+      echo "usage: verify-page.sh [-g|--googlebot] URL" >&2
+      exit 2
+      ;;
+    -g|--googlebot)
+      USE_GOOGLEBOT=1
+      shift
+      ;;
+    http://*|https://*)
+      if [[ -n "$URL" ]]; then
+        echo "usage: verify-page.sh [-g|--googlebot] URL" >&2
+        exit 2
+      fi
+      URL="$1"
+      shift
+      ;;
+    *)
+      echo "usage: URL must start with http:// or https://" >&2
+      exit 2
+      ;;
+  esac
+done
+
+if [[ -z "$URL" ]]; then
+  echo "usage: verify-page.sh [-g|--googlebot] URL" >&2
   exit 2
 fi
 
-URL="$1"
 for bin in curl python3; do
   command -v "$bin" >/dev/null 2>&1 || { echo "missing_dependency: $bin" >&2; exit 2; }
 done
-case "$URL" in
-  http://*|https://*) ;;
-  *) echo "usage: URL must start with http:// or https://" >&2; exit 2 ;;
-esac
+
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
-UA="verify-page/1.0 (+https://github.com/grvmon/sniper-seo-geo-aeo)"
+if [[ "$USE_GOOGLEBOT" -eq 1 ]]; then
+  UA="Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Mobile Safari/537.36 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)"
+else
+  UA="verify-page/1.0 (+https://github.com/grvmon/sniper-seo-geo-aeo)"
+fi
 
 if ! curl -sS -L --proto =http,https --proto-redir =http,https --max-redirs 5 --max-time 30 -A "$UA" \
   -D "$TMP/headers" -o "$TMP/body" \
@@ -74,6 +102,14 @@ for block in blocks:
     hops.append((code, lines[1:]))
 hop_statuses = [c for c, _ in hops]
 final_headers = hops[-1][1] if hops else []
+last_modified = "(none)"
+etag = "(none)"
+for ln in final_headers:
+    low_ln = ln.lower()
+    if low_ln.startswith("last-modified:"):
+        last_modified = ln.split(":", 1)[1].strip()
+    elif low_ln.startswith("etag:"):
+        etag = ln.split(":", 1)[1].strip()
 XR_DIRECTIVES = {"all", "noindex", "nofollow", "none", "nosnippet", "indexifembedded",
                  "notranslate", "noimageindex", "unavailable_after", "max-snippet",
                  "max-image-preview", "max-video-preview", "noarchive", "nocache", "index", "follow"}
@@ -100,6 +136,7 @@ class Page(HTMLParser):
         self.robots = []
         self.robots_other = []
         self.meta_desc = []
+        self.viewport = None
         self.hreflang = 0
         self.headings = []  # (level, text)
         self.h_level = 0
@@ -148,7 +185,9 @@ class Page(HTMLParser):
             self.hreflang += 1
         if tag == "meta":
             name = a.get("name", "").lower()
-            if name in ("robots", "googlebot", "bingbot"):
+            if name == "viewport":
+                self.viewport = a.get("content", "").strip()
+            elif name in ("robots", "googlebot", "bingbot"):
                 self.robots.append(f"{name}: {a.get('content', '')}")
             elif name in ("googlebot-news", "slurp", "duckduckbot", "yandex", "baiduspider"):
                 self.robots_other.append(f"{name}: {a.get('content', '')}")
@@ -342,9 +381,37 @@ print(f"visible_words: {len(words_list)}")
 print(f"img_count: {page.img_count}")
 print(f"img_missing_alt: {page.img_missing_alt}")
 print(f"img_lazy_count: {page.img_lazy}")
+vp = page.viewport or ""
+print(f"viewport: {vp if vp else '(none)'}")
+if not vp:
+    vp_status = "warn: missing viewport tag (mobile-first risk)"
+elif "width=device-width" in vp.lower():
+    vp_status = "pass"
+else:
+    vp_status = "warn: missing width=device-width"
+print(f"viewport_status: {vp_status}")
+
 script_tags = len(re.findall(r"(?i)<script\b", body))
 print(f"script_tags: {script_tags}")
 print(f"js_shell_suspect: {'yes' if len(text) < 500 and script_tags > 0 else 'no'}")
+
+SOFT_404_RX = re.compile(
+    r"\b(page not found|404 not found|404 error|article not found|post not found|product not found|no products found|category not found|item not found|content not found|page doesn'?t exist|page does not exist|could not find the page)\b",
+    re.I
+)
+is_soft_404 = False
+if status.startswith("2"):
+    title_low = title_text.lower()
+    if "404" in title_low or "not found" in title_low:
+        is_soft_404 = True
+    elif SOFT_404_RX.search(text):
+        is_soft_404 = True
+    elif len(words_list) < 25 and script_tags == 0:
+        is_soft_404 = True
+print(f"soft_404_suspect: {'yes' if is_soft_404 else 'no'}")
+print(f"last_modified: {last_modified}")
+print(f"etag: {etag}")
+print(f"user_agent: {'googlebot_smartphone' if 'Googlebot' in ua else 'default'}")
 print("browser_render: nt")
 print("rendered_html: nt")
 

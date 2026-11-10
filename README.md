@@ -29,7 +29,7 @@ The procedure is [`SKILL.md`](SKILL.md). Short guides are in the [wiki](https://
 ## Features
 
 - Intake before any recommendation: URL, market, target query, SERP intent format match, competitors the owner names, access, baseline, and a per-bot training choice.
-- `scripts/verify-page.sh` fetches status, redirects, robots, canonical, sitemap, schema, title/meta snippet health, image SEO, and outlinks.
+- `scripts/verify-page.sh` fetches status, redirects, robots, canonical, sitemap, schema, title/meta snippet health, mobile viewport, soft 404 detection, image SEO, and outlinks. Supports `-g` / `--googlebot` for Googlebot Smartphone emulation.
 - Technical checks stay `pass`, `fail`, or `NT`. A missing `index, follow` meta is not a failure.
 - Citability score from five tested categories: Answer, Contain, Structure, Sourced, and Information Gain (Originality). Categories you did not test stay `NT` and are not turned into zero. `overall` is `NT` when coverage is under 60.
 - An evidence ledger. A number with no row is dropped.

@@ -45,6 +45,20 @@ scenario x /eyebrow "styled eyebrow not flagged" '^first_p_label_prefix: no' '^s
 scenario x "/canq?b=2" "canonical differs by query" '^canonical_matches_final: no' '^canonical_differs: query'
 scenario x "/canq?a=1" "canonical with same query matches" '^canonical_matches_final: yes' '^canonical_differs: none'
 scenario x /img "image and title/meta checks" '^img_count: 2' '^img_missing_alt: 1' '^img_lazy_count: 1' '^title_status: pass' '^meta_description_status: pass'
+scenario x /viewport "viewport tag passes" '^viewport: width=device-width' '^viewport_status: pass'
+scenario x /soft404 "soft 404 flagged on 200 page" '^soft_404_suspect: yes'
+
+# test googlebot smartphone flag
+pf="$(mktemp)"; rm -f "$pf"
+python3 "$DIR/tests/fixture_server.py" "x" "$pf" & pid=$!
+for _ in $(seq 50); do [[ -s "$pf" ]] && break; sleep 0.1; done
+out="$(bash "$VP" -g "http://127.0.0.1:$(cat "$pf")/page" 2>&1)"
+kill "$pid" 2>/dev/null; wait "$pid" 2>/dev/null; rm -f "$pf"
+if grep -q '^user_agent: googlebot_smartphone' <<<"$out"; then
+  ok "googlebot flag emulates googlebot smartphone"
+else
+  bad "googlebot flag failed" "$out"
+fi
 
 # usage errors
 for args in "" "file:///etc/passwd" "a b"; do

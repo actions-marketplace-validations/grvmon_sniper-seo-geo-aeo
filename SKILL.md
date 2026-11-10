@@ -46,10 +46,12 @@ Stop and fill this in before recommending changes. Use `NT` for unknown fields.
 
 ## 2. Verify
 
-Run the verification check with `bash` and the skill's absolute path, from any working directory:
+Run the verification check with `bash` and the skill's absolute path, from any working directory. Use optional `-g` or `--googlebot` to emulate the official Googlebot Smartphone User-Agent:
 
 ```bash
 bash <skill-dir>/scripts/verify-page.sh 'https://example.com/page/'
+# Or emulate Googlebot Smartphone User-Agent:
+bash <skill-dir>/scripts/verify-page.sh -g 'https://example.com/page/'
 ```
 
 Exit 0 means a response was saved, even a 404. Exit 2 means usage error, missing `curl`/`python3`, or a failed fetch. The script reports pass/fail facts and prints `nt` for anything it did not do. It is an indexation and on-page validator, not a rank checker.
@@ -63,8 +65,11 @@ Then evaluate these checks. Each is `pass`, `fail`, or `NT`.
 4. **Sitemap.** The URL is in a sitemap declared from `robots.txt`. The script reads declared sitemaps, expands indexes, and unzips `.gz`, up to 20 files. Membership is `NT` when any file failed or the cap was hit.
 5. **Schema.** JSON-LD parses without syntax errors. Every value is visible on the page and true. `sameAs` URLs were opened and name the same entity. See `references/schema.md`.
 6. **Title & meta snippet health.** `title_status` checks length (30–65 chars optimal for Google SERP display without truncation). `meta_description_status` checks length (70–160 chars optimal).
-7. **Image SEO.** The script reports `img_count`, `img_missing_alt`, and `img_lazy_count`. Images must include descriptive alt text and explicit aspect ratios to prevent CLS and rank in Google Images.
-8. **Internal links and orphans.** Count same-host links on the page. An orphan is a sitemap URL with no internal link from the crawled set. Without that crawl, orphan status is `NT`.
+7. **Mobile-first & viewport.** Googlebot is 100% mobile-first. `viewport_status` checks presence of `<meta name="viewport" content="width=device-width, initial-scale=1">`. Missing viewport triggers mobile demotions.
+8. **Soft 404 detection.** `soft_404_suspect` flags 200 OK pages containing "not found / error" text or thin content (< 25 words) that Googlebot drops from index.
+9. **Image SEO.** The script reports `img_count`, `img_missing_alt`, and `img_lazy_count`. Images must include descriptive alt text and explicit aspect ratios to prevent CLS and rank in Google Images.
+10. **Crawl caching & freshness.** Reports `last_modified` and `etag` headers used by Googlebot for conditional HTTP 304 crawl budget savings.
+11. **Internal links and orphans.** Count same-host links on the page. An orphan is a sitemap URL with no internal link from the crawled set. Without that crawl, orphan status is `NT`.
 
 A site's own house style, if any, lives in a separate reference file and is applied only to that site. See `references/house-rules-template.md`.
 
@@ -156,6 +161,8 @@ URL, market, target query, SERP intent format match, competitors, access, baseli
 | Sitemap | pass / fail / NT | |
 | Schema matches visible text | pass / fail / NT | |
 | Title & meta snippet health | pass / warn / fail | |
+| Viewport / Mobile-first | pass / warn / fail | |
+| Soft 404 check | pass / suspect | |
 | Image SEO & alt tags | pass / warn / fail | |
 | Internal links / orphans | pass / fail / NT | |
 
