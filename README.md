@@ -14,7 +14,7 @@ Google's [AI features documentation](https://developers.google.com/search/docs/a
 
 Citation overlap across engines depends on the query. This skill records a sampling log or marks overlap `NT`. It does not publish an overlap percentage, and it does not assume the Google top result is what other engines cite.
 
-The procedure is [`SKILL.md`](SKILL.md). Short guides are in the [wiki](https://github.com/grvmon/sniper-seo-geo-aeo/wiki).
+The procedure is [`SKILL.md`](SKILL.md). A complete walkthrough is in [`TUTORIAL.md`](TUTORIAL.md). Short guides are in the [wiki](https://github.com/grvmon/sniper-seo-geo-aeo/wiki).
 
 ## What it does
 
@@ -30,6 +30,7 @@ The procedure is [`SKILL.md`](SKILL.md). Short guides are in the [wiki](https://
 - [Supported engines](#supported-engines)
 - [Install](#install)
 - [Usage](#usage)
+- [Tutorial](TUTORIAL.md)
 - [Examples](#examples)
 - [Layout](#layout)
 - [FAQ](#faq)
@@ -111,6 +112,8 @@ Point the `@grvmon` scope at GitHub Packages. In the project `.npmrc`:
 Package page: [github.com/grvmon/sniper-seo-geo-aeo/pkgs/npm/sniper-seo-geo-aeo](https://github.com/grvmon/sniper-seo-geo-aeo/pkgs/npm/sniper-seo-geo-aeo).
 
 ## Usage
+
+For a complete step-by-step walkthrough covering CLI commands, prompt templates, and remediation code deployment, see [`TUTORIAL.md`](TUTORIAL.md).
 
 1. Install the skill with one of the methods above.
 2. Ask for an SEO audit, a crawler review, a schema pass, or a before/after rewrite. Name the engine when you care about one.

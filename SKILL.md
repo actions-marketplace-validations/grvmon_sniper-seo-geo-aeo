@@ -14,7 +14,7 @@ description: >
 
 Google's AI Overviews and AI Mode use standard Google Search ranking systems. There is no secret file, schema type, or word count required to appear in them; pages must rank organically, satisfy search intent, and provide high Information Gain to be cited. Other answer engines (ChatGPT, Perplexity, Claude) publish and maintain their own crawlers. Record what you fetched, score only tested facts, and leave everything else as `NT` (not tested).
 
-Read `references/platforms.md` for crawlers and Core Web Vitals, `references/schema.md` when reviewing or generating structured data, `references/verticals.md` for page types, and `references/humanize.md` for content humanization and anti-AI cadence. A complete worked audit is in `references/example-audit.md`. A site-specific house rules template is in `references/house-rules-template.md`.
+Read `references/platforms.md` for crawlers and Core Web Vitals, `references/schema.md` when reviewing or generating structured data, `references/verticals.md` for page types, and `references/humanize.md` for content humanization and anti-AI cadence. A complete worked audit is in `references/example-audit.md`. A step-by-step tutorial is in `TUTORIAL.md`. A site-specific house rules template is in `references/house-rules-template.md`.
 
 ## Sources to follow
 
