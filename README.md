@@ -41,7 +41,13 @@ AI engines don't read rambling 3,000-word articles. When someone asks ChatGPT or
 ### 3. 🧼 The Humanizer: Kills Robotic AI Buzzwords
 Nothing destroys buyer trust faster than content that sounds like raw ChatGPT output. We scan your text for 60+ overused AI clichés (such as *"delve"*, *"game changer"*, and *"in today's digital landscape"*) so your brand sounds like a real, authoritative human expert.
 
-### 4. 📦 The Fix-It Kit: Copy-Paste Updates in 2 Minutes
+### 4. 🖼️ Image Optimization & Layout Stability
+Heavy or unformatted images cause slow load times and layout shift (CLS). We audit:
+* **Modern Formats:** Detection of WebP, AVIF, and SVG vs legacy PNG and JPEG files.
+* **Layout Stability (CLS):** Confirms explicit `width` and `height` attributes or CSS aspect ratios on all images to eliminate layout shifts.
+* **Asset Size Check:** Lightweight inspection flags oversized images (>200 KB) that degrade user experience and Core Web Vitals.
+
+### 5. 📦 The Fix-It Kit: Copy-Paste Updates in 2 Minutes
 We don't just dump a list of technical errors on your desk. You get ready-to-publish assets:
 * **Click-worthy Titles & Descriptions** designed to win clicks on Google.
 * **Direct-Answer Snippets** crafted for Google AI Overviews and ChatGPT summaries.
@@ -83,6 +89,7 @@ When you run an audit with this skill, here is the exact 10-step sequence it fol
 
 - Intake before any recommendation: URL, market, target query, SERP intent format match, competitors the owner names, access, baseline, and a per-bot training choice.
 - `scripts/verify-page.sh` fetches status, redirects, robots, canonical, sitemap, schema syntax and duplicate root entity types, title/meta and OpenGraph snippet health, mobile viewport, soft 404 detection (including SPA `llms.txt` fallbacks), content humanization (AI cliché scanner), image SEO, and outlinks. Supports `-g` / `--googlebot` for Googlebot Smartphone emulation.
+- Image optimization & layout stability: audits missing alt attributes, lazy loading, modern image formats (WebP/AVIF/SVG), explicit width/height dimensions (CLS prevention), and oversized image files (>200 KB).
 - Technical checks stay `pass`, `fail`, or `NT`. A missing `index, follow` meta is not a failure.
 - Content humanization & anti-AI cadence: flags formulaic phrases (a style lint, not a ranking test) and gives editing guidance on sentence rhythm and specificity.
 - Citability score from five tested categories: Answer, Contain, Structure, Sourced, and Information Gain (Originality). Categories you did not test stay `NT` and are not turned into zero. `overall` is `NT` when coverage is under 60.

@@ -20,7 +20,11 @@ class H(http.server.BaseHTTPRequestHandler):
         self.send_header("Content-Type", ct)
         self.send_header("Content-Length", str(len(b)))
         self.end_headers()
-        self.wfile.write(b)
+        if self.command != "HEAD":
+            self.wfile.write(b)
+
+    def do_HEAD(self):
+        self.do_GET()
 
     def urlset(self, *paths):
         u = "http://%s" % self.headers["Host"]
@@ -107,6 +111,14 @@ class H(http.server.BaseHTTPRequestHandler):
         if p == "/answer-ready":
             p_text = "An allotment letter is a legally binding document issued by a developer confirming the booking of a specific property unit, floor plan, and financial payment schedule. It acts as primary legal evidence of ownership allocation prior to the execution of the final sale deed agreement."
             return self.send(200, '<html><head><title>Answer Ready Page Thirty Chars Long</title></head><body><h1>Guide</h1><p>%s</p></body></html>' % p_text)
+        if p == "/img-modern":
+            return self.send(200, '<html><head><title>Modern Images Page Thirty Chars</title></head><body><h1>Title</h1><img src="/graphic.webp" width="800" height="600" alt="Graphic" loading="lazy"><img src="/vector.svg" width="100" height="100" alt="Logo"></body></html>')
+        if p in ("/graphic.webp", "/vector.svg"):
+            return self.send(200, b"fake_small_image_bytes", "image/webp")
+        if p == "/img-heavy":
+            return self.send(200, '<html><head><title>Heavy Image Page Thirty Chars Long</title></head><body><h1>Title</h1><img src="/huge.png" alt="Big"></body></html>')
+        if p == "/huge.png":
+            return self.send(200, b"0" * 250000, "image/png")
         if p.startswith("/canq"):
             return self.send(200, PAGE % '<link rel="canonical" href="/canq?a=1">')
         return self.send(200, PAGE % "")

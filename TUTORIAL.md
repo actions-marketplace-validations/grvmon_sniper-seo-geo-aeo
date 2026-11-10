@@ -60,6 +60,9 @@ The script outputs line-by-line factual evidence or `nt` (not tested). Look for 
 | `og_title_matches_title: yes` | Checks if OpenGraph title matches HTML `<title>`. | `yes` (ensures consistency) |
 | `heading_hierarchy: pass` | Evaluates DOM heading structure (H1 through H6) for skipped levels. | `pass` (valid outline) |
 | `first_p_answer_ready: yes` | Evaluates lead paragraph for 35–65 word AI summary snippet. | `yes` (optimal answer length) |
+| `img_dim_status: pass` | Checks explicit width/height and aspect ratios on images. | `pass` (CLS prevention) |
+| `img_format_status: pass` | Evaluates modern formats (WebP/AVIF/SVG) vs legacy files. | `pass` (modern formats) |
+| `img_oversized_count: 0` | Flags images exceeding 200 KB in file size. | `0` (optimized asset weight) |
 | `viewport_status: pass` | Checks for `width=device-width` viewport tag. | `pass` (mobile readiness) |
 | `soft_404_suspect: no` | Flags HTTP 200 responses that are actually error pages. | `no` |
 | `ai_cliche_count: 0` | Scans for 19 formulaic generative AI phrases. | `0` (`humanize_status: pass`) |

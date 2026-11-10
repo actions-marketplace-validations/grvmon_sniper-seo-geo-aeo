@@ -2,6 +2,16 @@
 
 All notable changes to this skill are documented here. The package version follows [Semantic Versioning](https://semver.org/).
 
+## 1.4.0 - 2026-11-11
+
+- Feat(images): added built-in Image Optimization Engine to `scripts/verify-page.sh`.
+- Feat(images): checks format modernization (`img_modern_formats` for WebP, AVIF, SVG vs `img_legacy_formats` for PNG, JPG, GIF).
+- Feat(images): audits layout stability and Cumulative Layout Shift (CLS) prevention (`img_missing_dims` and `img_dim_status` verifying width/height and inline aspect ratios).
+- Feat(images): lightweight file size inspection flags oversized images exceeding 200 KB (`img_oversized_count`).
+- Feat(report): added dedicated "Image Optimization & Layout Stability" table in Markdown executive summary (`-r`).
+- Feat(json): expanded JSON output schema under `"images"` with dimensions, formats, and file size checks.
+- Tests: added fixture server endpoints and 2 new automated test scenarios for image optimization (56 tests passing).
+
 ## 1.3.0 - 2026-11-11
 
 - Feat(cli): added `-j` / `--json` flag to `scripts/verify-page.sh` for structured JSON output.

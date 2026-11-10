@@ -69,6 +69,8 @@ scenario x /headings-good "heading hierarchy valid" '^h1_count: 1' '^h1_status: 
 scenario x /headings-skip "heading hierarchy skipped level" '^heading_hierarchy: warn: skipped levels \(h1->h3\)'
 scenario x /headings-noh1 "heading hierarchy missing h1" '^h1_count: 0' '^h1_status: warn: missing h1'
 scenario x /answer-ready "direct answer snippet ready" '^first_p_words: 45' '^first_p_answer_ready: yes \(45 words, optimal 35-65\)'
+scenario x /img-modern "modern image formats and layout stability pass" '^img_count: 2' '^img_missing_dims: 0' '^img_dim_status: pass' '^img_modern_formats: 2' '^img_legacy_formats: 0' '^img_format_status: pass' '^img_oversized_count: 0'
+scenario x /img-heavy "legacy image without dimensions and oversized" '^img_count: 1' '^img_missing_dims: 1' '^img_dim_status: warn: 1 image\(s\) missing width/height \(CLS risk\)' '^img_modern_formats: 0' '^img_legacy_formats: 1' '^img_format_status: warn: 1 legacy image\(s\) detected \(recommend WebP or AVIF\)' '^img_oversized_count: 1'
 
 # --- docs consistency: rubric weights, worked-example arithmetic, char counts ---
 if doc_out="$(python3 - "$DIR" << 'PY'
@@ -128,7 +130,7 @@ python3 "$DIR/tests/fixture_server.py" "x" "$pf" & pid=$!
 for _ in $(seq 50); do [[ -s "$pf" ]] && break; sleep 0.1; done
 json_out="$(bash "$VP" -j "http://localhost:$(cat "$pf")/page" 2>&1)"
 kill "$pid" 2>/dev/null; wait "$pid" 2>/dev/null; rm -f "$pf"
-if python3 -c "import json, sys; d = json.loads(sys.argv[1]); assert d['http']['status'] == '200' and 'metadata' in d and 'headings' in d" "$json_out" 2>/dev/null; then
+if python3 -c "import json, sys; d = json.loads(sys.argv[1]); assert d['http']['status'] == '200' and 'metadata' in d and 'headings' in d and 'dimension_status' in d['images']" "$json_out" 2>/dev/null; then
   ok "json flag produces valid structured schema"
 else
   bad "json flag failed to produce valid json" "$json_out"
@@ -140,7 +142,7 @@ python3 "$DIR/tests/fixture_server.py" "x" "$pf" & pid=$!
 for _ in $(seq 50); do [[ -s "$pf" ]] && break; sleep 0.1; done
 report_out="$(bash "$VP" -r "http://localhost:$(cat "$pf")/page" 2>&1)"
 kill "$pid" 2>/dev/null; wait "$pid" 2>/dev/null; rm -f "$pf"
-if grep -q '# Sniper SEO & AI Verification Report' <<<"$report_out" && grep -q '## 1. Technical & Indexation Health' <<<"$report_out"; then
+if grep -q '# Sniper SEO & AI Verification Report' <<<"$report_out" && grep -q '## 1. Technical & Indexation Health' <<<"$report_out" && grep -q '## 4. Image Optimization & Layout Stability' <<<"$report_out"; then
   ok "report flag produces formatted markdown executive summary"
 else
   bad "report flag failed" "$report_out"

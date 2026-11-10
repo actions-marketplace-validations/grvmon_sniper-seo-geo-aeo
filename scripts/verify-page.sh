@@ -76,7 +76,7 @@ if ! curl -sS -L --proto =http,https --proto-redir =http,https --max-redirs 5 --
 fi
 
 python3 - "$URL" "$TMP" "$UA" "$OUTPUT_FORMAT" << 'PY'
-import json, re, sys, html, gzip, io, urllib.error, urllib.request
+import json, re, sys, html, gzip, io, os, urllib.error, urllib.request
 from collections import defaultdict
 from html.parser import HTMLParser
 from urllib.parse import urljoin, urlparse
@@ -211,6 +211,8 @@ class Page(HTMLParser):
         self.img_count = 0
         self.img_missing_alt = 0
         self.img_lazy = 0
+        self.img_missing_dims = 0
+        self.img_sources = []
         self.og_title = None
         self.og_desc = None
         self.og_image = None
@@ -266,6 +268,15 @@ class Page(HTMLParser):
                 self.img_missing_alt += 1
             if "lazy" in a.get("loading", "").lower():
                 self.img_lazy += 1
+            src = a.get("src") or a.get("data-src") or ""
+            if src:
+                self.img_sources.append(src)
+            has_w = bool(a.get("width", "").strip())
+            has_h = bool(a.get("height", "").strip())
+            style_str = a.get("style", "").lower()
+            has_aspect = "aspect-ratio" in style_str
+            if not ((has_w and has_h) or has_aspect):
+                self.img_missing_dims += 1
 
     def handle_endtag(self, tag):
         if tag in ("script", "style"):
@@ -492,9 +503,72 @@ print(f"hreflang_count: {page.hreflang}")
 print(f"initial_html_text_chars: {len(text)}")
 words_list = text.split()
 print(f"visible_words: {len(words_list)}")
+MODERN_IMG_EXTS = {".webp", ".avif", ".svg"}
+LEGACY_IMG_EXTS = {".png", ".jpg", ".jpeg", ".gif", ".bmp", ".tiff", ".ico"}
+
+modern_img_count = 0
+legacy_img_count = 0
+
+for isrc in page.img_sources:
+    try:
+        p_path = urlparse(isrc).path.lower()
+        _, ext = os.path.splitext(p_path)
+        q_str = urlparse(isrc).query.lower()
+        if ext in MODERN_IMG_EXTS or any(x in q_str for x in ("format=webp", "format=avif", "fm=webp", "fm=avif", "ext=webp")):
+            modern_img_count += 1
+        elif ext in LEGACY_IMG_EXTS or any(x in q_str for x in ("format=png", "format=jpg", "format=jpeg", "fm=jpg", "fm=jpeg", "fm=png")):
+            legacy_img_count += 1
+    except Exception:
+        pass
+
+if page.img_count == 0:
+    img_dim_status = "none"
+    img_format_status = "none"
+else:
+    if page.img_missing_dims == 0:
+        img_dim_status = "pass"
+    else:
+        img_dim_status = f"warn: {page.img_missing_dims} image(s) missing width/height (CLS risk)"
+
+    if legacy_img_count == 0 and modern_img_count > 0:
+        img_format_status = "pass"
+    elif legacy_img_count == 0 and modern_img_count == 0:
+        img_format_status = "pass"
+    else:
+        img_format_status = f"warn: {legacy_img_count} legacy image(s) detected (recommend WebP or AVIF)"
+
+img_oversized_count = 0
+checked_imgs = set()
+for isrc in page.img_sources[:5]:
+    if not isrc or isrc.startswith("data:"):
+        continue
+    img_url = urljoin(final_url, isrc)
+    if img_url in checked_imgs:
+        continue
+    checked_imgs.add(img_url)
+    p_img = urlparse(img_url)
+    if p_img.scheme not in ("http", "https"):
+        continue
+    try:
+        req = urllib.request.Request(img_url, headers={"User-Agent": ua}, method="HEAD")
+        opener = urllib.request.build_opener(_SafeRedirect)
+        with opener.open(req, timeout=2.5) as resp:
+            clen = resp.headers.get("Content-Length")
+            if clen and clen.isdigit():
+                if int(clen) > 200 * 1024:
+                    img_oversized_count += 1
+    except Exception:
+        pass
+
 print(f"img_count: {page.img_count}")
 print(f"img_missing_alt: {page.img_missing_alt}")
 print(f"img_lazy_count: {page.img_lazy}")
+print(f"img_missing_dims: {page.img_missing_dims}")
+print(f"img_dim_status: {img_dim_status}")
+print(f"img_modern_formats: {modern_img_count}")
+print(f"img_legacy_formats: {legacy_img_count}")
+print(f"img_format_status: {img_format_status}")
+print(f"img_oversized_count: {img_oversized_count}")
 vp = page.viewport or ""
 print(f"viewport: {vp if vp else '(none)'}")
 if not vp:
@@ -872,7 +946,13 @@ if out_format == "json":
         "images": {
             "total": page.img_count,
             "missing_alt": page.img_missing_alt,
-            "lazy": page.img_lazy
+            "lazy": page.img_lazy,
+            "missing_dimensions": page.img_missing_dims,
+            "dimension_status": img_dim_status,
+            "modern_formats": modern_img_count,
+            "legacy_formats": legacy_img_count,
+            "format_status": img_format_status,
+            "oversized_count": img_oversized_count
         },
         "llms_txt": {
             "status": llms_status,
@@ -914,5 +994,14 @@ elif out_format == "report":
         md.append(f"* **OpenGraph Title:** `{og_t}` (matches title: {'yes' if og_t == title_text else 'no'})")
     if og_img:
         md.append(f"* **OpenGraph Image:** `{og_img}`")
+    md.append("")
+    md.append("## 4. Image Optimization & Layout Stability")
+    md.append("| Metric | Status | Finding |")
+    md.append("| :--- | :--- | :--- |")
+    md.append(f"| Alt Text Coverage | {'PASS' if page.img_missing_alt == 0 else 'WARN'} | {page.img_count} image(s), {page.img_missing_alt} missing alt attribute |")
+    md.append(f"| Layout Stability (CLS) | {'PASS' if page.img_missing_dims == 0 else 'WARN'} | {img_dim_status} |")
+    md.append(f"| Modern Formats | {'PASS' if legacy_img_count == 0 else 'WARN'} | {modern_img_count} modern (WebP/AVIF/SVG), {legacy_img_count} legacy |")
+    md.append(f"| Lazy Loading | {'PASS' if page.img_lazy > 0 or page.img_count == 0 else 'INFO'} | {page.img_lazy} lazy loaded |")
+    md.append(f"| File Size Check | {'PASS' if img_oversized_count == 0 else 'WARN'} | {img_oversized_count} oversized (>200 KB) image(s) detected |")
     _real_print("\n".join(md))
 PY
