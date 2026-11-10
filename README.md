@@ -14,7 +14,7 @@ The procedure is [`SKILL.md`](SKILL.md). Short guides are in the [wiki](https://
 
 ## What it does
 
-1. **Verification (`verify-page.sh`):** needs only `curl` and `python3`. Reports status and redirects, robots.txt (RFC 9309 parsing, matched on path plus query) with an allow/disallow line for 15 crawler tokens split into search, user-fetch, training and ads, meta robots and `X-Robots-Tag`, canonical, sitemap membership (index and `.gz` expansion, up to 20 files), schema syntax, title and meta length, viewport, soft-404 heuristics, image alt counts, and cache headers. Anything it did not check prints `nt`.
+1. **Verification (`verify-page.sh`):** needs only `curl` and `python3`. Reports status and redirects, robots.txt (RFC 9309 parsing, matched on path plus query) with an allow/disallow line for 15 crawler tokens split into search, user-fetch, training and ads, meta robots and `X-Robots-Tag`, canonical, sitemap membership (index and `.gz` expansion, up to 20 files), schema syntax and duplicate entity detection across blocks, title, meta and OpenGraph tags, viewport, soft-404 heuristics (including SPA `llms.txt` fallbacks), image alt counts, and cache headers. Anything it did not check prints `nt`.
 2. **Citability scoring:** five categories, `NT` when untested. `answer`, `contain` and `original` are rater-judged heuristics, not Google signals.
 3. **Style lint:** flags the formulaic phrases listed in `references/humanize.md` (except the stacked-connector row). It is an editing aid, not a ranking test.
 4. **Draft remediation:** proposes title, meta, a lead answer and linked JSON-LD. A person reviews and publishes; nothing is changed automatically, and no links or badges are inserted.
@@ -35,7 +35,7 @@ The procedure is [`SKILL.md`](SKILL.md). Short guides are in the [wiki](https://
 ## Features
 
 - Intake before any recommendation: URL, market, target query, SERP intent format match, competitors the owner names, access, baseline, and a per-bot training choice.
-- `scripts/verify-page.sh` fetches status, redirects, robots, canonical, sitemap, schema, title/meta snippet health, mobile viewport, soft 404 detection, content humanization (AI cliché scanner), image SEO, and outlinks. Supports `-g` / `--googlebot` for Googlebot Smartphone emulation.
+- `scripts/verify-page.sh` fetches status, redirects, robots, canonical, sitemap, schema syntax and duplicate root entity types, title/meta and OpenGraph snippet health, mobile viewport, soft 404 detection (including SPA `llms.txt` fallbacks), content humanization (AI cliché scanner), image SEO, and outlinks. Supports `-g` / `--googlebot` for Googlebot Smartphone emulation.
 - Technical checks stay `pass`, `fail`, or `NT`. A missing `index, follow` meta is not a failure.
 - Content humanization & anti-AI cadence: flags formulaic phrases (a style lint, not a ranking test) and gives editing guidance on sentence rhythm and specificity.
 - Citability score from five tested categories: Answer, Contain, Structure, Sourced, and Information Gain (Originality). Categories you did not test stay `NT` and are not turned into zero. `overall` is `NT` when coverage is under 60.

@@ -165,8 +165,10 @@ URL, market, target query, SERP intent format match, competitors, access, baseli
 | Sitemap | pass / fail / NT | |
 | Schema matches visible text | pass / fail / NT | |
 | Title & meta snippet health | pass / warn / fail | |
+| OpenGraph & social snippet | pass / warn / NT | |
 | Viewport / Mobile-first | pass / warn / fail | |
 | Soft 404 check | pass / suspect | |
+| llms.txt & SPA fallback | pass / warn / NT | |
 | Content humanization / AI clichés | pass / warn | |
 | Image SEO & alt tags | pass / warn / fail | |
 | Internal links / orphans | pass / fail / NT | |
