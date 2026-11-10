@@ -340,6 +340,7 @@ if len(canon_unique) == 1:
     print(f"canonical_matches_final: {'yes' if norm(abs_c) == norm(final_url) else 'no'}")
     print(f"canonical_differs: {canonical_diff(abs_c, final_url)}")
 elif len(canon_unique) == 0:
+    print("canonical_status: warn: no canonical declared (Google will choose one itself)")
     print("canonical_fetch_status: nt")
     print("canonical_matches_final: nt")
     print("canonical_differs: nt")
@@ -414,7 +415,7 @@ print(f"etag: {etag}")
 print(f"user_agent: {'googlebot_smartphone' if 'Googlebot' in ua else 'default'}")
 
 AI_CLICHE_RX = re.compile(
-    r"\b(in today's (fast-paced|ever-evolving|digital)|delve into|delving into|a tapestry of|a testament to|beacon of|crucial role|pivotal role|harness the power of|unleash the potential of|game-changer|nestled in the heart of|embark on a journey)\b",
+    r"\b(in today's (fast-paced|ever-evolving|digital)|in this ever-evolving world of|it is important to (remember|keep in mind)|when it comes to|delve into|delving into|a tapestry of|a testament to|beacon of|double-edged sword|crucial role|pivotal role|harness the power of|unleash the potential of|game-changer|revolutionary|nestled in the heart of|embark on a journey|plethora of|needless to say|in conclusion|to wrap up|all in all)\b",
     re.I
 )
 ai_cliches = [m.group(0).lower() for m in AI_CLICHE_RX.finditer(text)]
@@ -529,8 +530,10 @@ if robots_mode == "parsed":
             sitemaps.append(urljoin(robots_url, val))
 
 def path_of(url):
-    p = urlparse(url).path or "/"
-    return p if p.startswith("/") else "/" + p
+    u = urlparse(url)
+    p = u.path or "/"
+    p = p if p.startswith("/") else "/" + p
+    return p + ("?" + u.query if u.query else "")  # RFC 9309 matches path plus query
 
 def matches(pattern, path):
     if pattern == "":

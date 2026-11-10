@@ -1,6 +1,7 @@
 """Local fixture server for verify-page.sh tests. Usage: fixture_server.py MODE PORTFILE"""
 import gzip
 import http.server
+import os
 import sys
 
 MODE, PORTFILE = sys.argv[1], sys.argv[2]
@@ -27,6 +28,10 @@ class H(http.server.BaseHTTPRequestHandler):
 
     def do_GET(self):
         p, m = self.path, MODE
+        if p == "/robots.txt" and m == "rawrobots":
+            return self.send(200, os.environ.get("FIXTURE_ROBOTS", ""), "text/plain")
+        if p == "/robots.txt" and m == "robots5xx":
+            return self.send(503, "unavailable", "text/plain")
         if p == "/robots.txt":
             body = {
                 "blankline": "User-agent: GPTBot\n\nDisallow: /\n",
@@ -81,6 +86,8 @@ class H(http.server.BaseHTTPRequestHandler):
             return self.send(200, '<html><head><title>404 Page Not Found</title></head><body><h1>Error</h1><p>We could not find the page you were looking for.</p></body></html>')
         if p == "/aicliche":
             return self.send(200, "<html><head><title>AI Test Page Title Long Enough Here</title></head><body><h1>Guide</h1><p>In today's fast-paced digital landscape, it is a crucial role to delve into data pipelines.</p></body></html>")
+        if p == "/aicliche2":
+            return self.send(200, "<html><head><title>AI Test Page Two Title Long Enough</title></head><body><h1>Guide</h1><p>When it comes to pipelines, it is important to remember that a plethora of tools is a double-edged sword. Needless to say, in conclusion, nothing is revolutionary.</p></body></html>")
         if p.startswith("/canq"):
             return self.send(200, PAGE % '<link rel="canonical" href="/canq?a=1">')
         return self.send(200, PAGE % "")

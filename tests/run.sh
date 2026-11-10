@@ -49,6 +49,20 @@ scenario x /viewport "viewport tag passes" '^viewport: width=device-width' '^vie
 scenario x /soft404 "soft 404 flagged on 200 page" '^soft_404_suspect: yes'
 scenario x /aicliche "ai cliche detected" '^ai_cliche_count: 3' '^humanize_status: warn: 3 AI cliché phrase\(s\) detected'
 
+# --- robots parser edge cases (raw robots body via FIXTURE_ROBOTS) ---
+FIXTURE_ROBOTS=$'User-agent: *\nDisallow: /*?sessionid=\n' scenario rawrobots "/page?sessionid=1" "robots rule on query string is matched" $'^robots_path: /page\\?sessionid=1' $'^robots_agent: GPTBot\ttraining\tgroup=\\*\tdisallow'
+FIXTURE_ROBOTS=$'User-agent: *\nDisallow: /*?sessionid=\n' scenario rawrobots "/page?other=1" "query rule does not match other queries" $'^robots_agent: GPTBot\ttraining\tgroup=\\*\tallow'
+FIXTURE_ROBOTS=$'User-agent: *\nDisallow: /\n\nUser-agent: Googlebot\nAllow: /\n' scenario rawrobots /page "named group overrides *" $'^robots_agent: Googlebot\tsearch\tgroup=Googlebot\tallow' $'^robots_agent: GPTBot\ttraining\tgroup=\\*\tdisallow'
+FIXTURE_ROBOTS=$'User-agent: gptbot\nDisallow: /\n' scenario rawrobots /page "agent token is case-insensitive" $'^robots_agent: GPTBot\ttraining\tgroup=GPTBot\tdisallow'
+FIXTURE_ROBOTS=$'User-agent: *\nDisallow: /page$\n' scenario rawrobots /page "dollar anchor matches exact path" $'^robots_agent: GPTBot\ttraining\tgroup=\\*\tdisallow'
+FIXTURE_ROBOTS=$'User-agent: *\nDisallow: /page$\n' scenario rawrobots /page/ "dollar anchor does not match longer path" $'^robots_agent: GPTBot\ttraining\tgroup=\\*\tallow'
+FIXTURE_ROBOTS=$'User-agent: *\nDisallow: /\nAllow: /page\n' scenario rawrobots /page "longest match wins" $'^robots_agent: GPTBot\ttraining\tgroup=\\*\tallow'
+FIXTURE_ROBOTS=$'User-agent: GPTBot\nCrawl-delay: 5\nUser-agent: ClaudeBot\nDisallow: /\n' scenario rawrobots /page "crawl-delay between agents keeps both in group" $'^robots_agent: GPTBot\ttraining\tgroup=GPTBot\tdisallow' $'^robots_agent: ClaudeBot\ttraining\tgroup=ClaudeBot\tdisallow'
+FIXTURE_ROBOTS=$'User-agent:   GPTBot   # training\nDisallow: /page # x\n' scenario rawrobots /page "comments and spaces tolerated" $'^robots_agent: GPTBot\ttraining\tgroup=GPTBot\tdisallow'
+scenario robots5xx /page "robots 5xx is nt, not allow" '^robots_txt_status: 503' $'^robots_agent: GPTBot\ttraining\tnt'
+scenario x /page "missing canonical is a warn" '^canonical_status: warn: no canonical declared'
+scenario x /aicliche2 "extended cliche list detected" '^ai_cliche_count: 7' '^humanize_status: warn'
+
 # test googlebot smartphone flag
 pf="$(mktemp)"; rm -f "$pf"
 python3 "$DIR/tests/fixture_server.py" "x" "$pf" & pid=$!
