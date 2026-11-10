@@ -76,7 +76,7 @@ When you run an audit with this skill, here is the exact 10-step sequence it fol
 - [Examples](#examples)
 - [Layout](#layout)
 - [FAQ](#faq)
-- [Author](#author)
+- [About & Author](#about--author)
 - [License](#license)
 
 ## Features
@@ -246,11 +246,17 @@ No. The skill is 100% white-label and strictly produces audit findings and produ
 
 Questions belong in [Discussions](https://github.com/grvmon/sniper-seo-geo-aeo/discussions). Defects and feature requests use the templates in [Issues](https://github.com/grvmon/sniper-seo-geo-aeo/issues). Vulnerabilities use [SECURITY.md](SECURITY.md), not a public issue.
 
-## Author
+## About & Author
 
-**Gaurav Mongia**
+**Sniper SEO + GEO + AEO** was built to replace the guessing game in modern search optimization. As search transitions from ten blue links to AI synthesis (Google AI Overviews, ChatGPT, Perplexity, Claude), website owners and marketers are bombarded with expensive tools peddling imaginary "AI visibility scores" and low-quality robotic content.
 
-[LinkedIn](https://www.linkedin.com/in/gaurav-a-mongia)
+This project takes the opposite approach: **zero hallucination, pure verification engineering**. It inspects raw code, scores only what can be proven with hard evidence, strips out robotic AI filler, and produces human-first, production-ready fixes.
+
+Created and maintained by **Gaurav Mongia**.
+
+* 💼 **LinkedIn:** [linkedin.com/in/gaurav-a-mongia](https://www.linkedin.com/in/gaurav-a-mongia)
+* 🐙 **GitHub:** [@grvmon](https://github.com/grvmon)
+* 💬 **Discussions & Feedback:** [GitHub Discussions](https://github.com/grvmon/sniper-seo-geo-aeo/discussions)
 
 ## License
 

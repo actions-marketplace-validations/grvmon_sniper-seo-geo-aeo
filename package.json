@@ -1,7 +1,7 @@
 {
   "name": "@grvmon/sniper-seo-geo-aeo",
   "version": "1.2.0",
-  "description": "Agent skill for SEO, GEO and AEO audits: finds and fixes issues so pages rank in Google and get cited by AI answer engines.",
+  "description": "Zero-hallucination SEO, GEO and AEO audits: verifies live pages, scores AI citability, removes robotic content, and drafts copy-paste fixes for Google, ChatGPT, and Perplexity.",
   "author": "Gaurav Mongia (https://www.linkedin.com/in/gaurav-a-mongia)",
   "homepage": "https://github.com/grvmon/sniper-seo-geo-aeo",
   "repository": {
