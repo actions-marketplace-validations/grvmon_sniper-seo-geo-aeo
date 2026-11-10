@@ -1,7 +1,7 @@
 # Sniper SEO + GEO + AEO
 
-> **Get your pages ranked on Google and cited by ChatGPT, Perplexity, and Claude.**  
-> Stop guessing why your traffic dropped or why AI engines aren't quoting your content. Sniper tests your live web pages, uncovers what’s holding them back, and hands you ready-to-use fixes in seconds.
+> **Check how Google, ChatGPT, Perplexity, and Claude read your web pages.**  
+> Most SEO tools charge monthly fees to guess at AI visibility. Sniper takes a simpler path: it runs real code against your live URL, shows you what search bots and AI crawlers actually see, and drafts clear fixes you can review and paste into your CMS.
 
 [![CI](https://github.com/grvmon/sniper-seo-geo-aeo/actions/workflows/ci.yml/badge.svg)](https://github.com/grvmon/sniper-seo-geo-aeo/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/grvmon/sniper-seo-geo-aeo)](https://github.com/grvmon/sniper-seo-geo-aeo/releases)
@@ -21,7 +21,7 @@ npx skills add grvmon/sniper-seo-geo-aeo
 
 * **Google AI Overviews is still Google Search:** According to [Google Search documentation](https://developers.google.com/search/docs/appearance/ai-features), there is no "secret AI tag" or magic file. Strong technical SEO and genuinely helpful answers are what get you featured.
 * **Search traffic vs. AI training are different:** You can let ChatGPT and Perplexity find and quote your website to send you buyers, without letting AI companies scrape your content for free model training. Crawlers are split by purpose (e.g. OpenAI's `OAI-SearchBot` for search vs. `GPTBot` for training).
-* **Zero BS, zero fake scores:** Most tools charge $200/month to show made-up "AI visibility percentages." Sniper only tests hard evidence: if something can't be proven by real code, it is marked `NT` (Not Tested)—never guessed.
+* **Zero BS, zero fake scores:** Most tools charge $200/month to show made-up "AI visibility percentages." Sniper only tests hard evidence: if something can't be proven by real code, it is marked `NT` (Not Tested), never guessed.
 
 📖 **Documentation:** [Step-by-Step Tutorial](TUTORIAL.md) • [Full Agent Workflow (`SKILL.md`)](SKILL.md) • [Wiki Guides](https://github.com/grvmon/sniper-seo-geo-aeo/wiki)
 
@@ -39,7 +39,7 @@ Before spending hours rewriting content, make sure bots can actually read your p
 AI engines don't read rambling 3,000-word articles. When someone asks ChatGPT or Perplexity a question, the AI looks for quick, self-contained 45-word answers backed by facts. We score your content on whether it gives AI an easy, credible quote to cite.
 
 ### 3. 🧼 The Humanizer: Kills Robotic AI Buzzwords
-Nothing destroys buyer trust faster than content that sounds like raw ChatGPT output. We scan your text for 60+ overused AI clichés—words like *"delve"*, *"game changer"*, *"testament to"*, and *"in today's digital landscape"*—so your brand sounds like a real, authoritative human expert.
+Nothing destroys buyer trust faster than content that sounds like raw ChatGPT output. We scan your text for 60+ overused AI clichés (such as *"delve"*, *"game changer"*, and *"in today's digital landscape"*) so your brand sounds like a real, authoritative human expert.
 
 ### 4. 📦 The Fix-It Kit: Copy-Paste Updates in 2 Minutes
 We don't just dump a list of technical errors on your desk. You get ready-to-publish assets:
@@ -76,7 +76,7 @@ When you run an audit with this skill, here is the exact 10-step sequence it fol
 - [Examples](#examples)
 - [Layout](#layout)
 - [FAQ](#faq)
-- [About & Author](#about--author)
+- [About & Author](#about-the-project--author)
 - [License](#license)
 
 ## Features
@@ -256,13 +256,22 @@ No. The skill is 100% white-label and strictly produces audit findings and produ
 
 Questions belong in [Discussions](https://github.com/grvmon/sniper-seo-geo-aeo/discussions). Defects and feature requests use the templates in [Issues](https://github.com/grvmon/sniper-seo-geo-aeo/issues). Vulnerabilities use [SECURITY.md](SECURITY.md), not a public issue.
 
-## About & Author
+## About the Project & Author
 
-**Sniper SEO + GEO + AEO** was built to replace the guessing game in modern search optimization. As search transitions from ten blue links to AI synthesis (Google AI Overviews, ChatGPT, Perplexity, Claude), website owners and marketers are bombarded with expensive tools peddling imaginary "AI visibility scores" and low-quality robotic content.
+I built **Sniper SEO + GEO + AEO** while optimizing real estate guides and property calculators at **[acre&key](https://acrenkey.com)** in Bengaluru.
 
-This project takes the opposite approach: **zero hallucination, pure verification engineering**. It inspects raw code, scores only what can be proven with hard evidence, strips out robotic AI filler, and produces human-first, production-ready fixes.
+Search is changing fast. People still search on Google, but they also ask questions directly in ChatGPT, Perplexity, and Claude. When I looked for tools to audit our pages for both search engines and AI summaries, I kept running into two problems. First, most platforms charged hundreds of dollars a month just to show vague "AI readiness scores" with no clear way to verify the math. Second, the fixes they recommended often generated robotic, generic filler that no real customer would want to read.
 
-Created and maintained by **Gaurav Mongia**.
+Sniper was built to solve that simply and honestly:
+
+* **Code over guesswork:** It inspects the actual HTML, HTTP headers, robots.txt rules, and schema markup on your live URL. If something cannot be tested directly with code, the tool marks it untested instead of inventing a number.
+* **Readable, helpful writing:** It checks whether your page answers the user's question early, flags robotic filler phrases, and ensures text reads like it was written by an experienced human.
+* **Zero lock-in:** The audit runs locally with standard tools (`curl` and `python3`). It does not inject backlinks, add promotional badges, or change anything on your site without your approval.
+
+I hope this helps you build pages that genuinely help your readers and earn citations across both Google and AI search engines.
+
+**Gaurav Mongia**  
+Founder, acre&key
 
 * 💼 **LinkedIn:** [linkedin.com/in/gaurav-a-mongia](https://www.linkedin.com/in/gaurav-a-mongia)
 * 🐙 **GitHub:** [@grvmon](https://github.com/grvmon)

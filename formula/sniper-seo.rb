@@ -1,7 +1,7 @@
 class SniperSeo < Formula
   desc "Zero-hallucination SEO, GEO, and AEO verification engine"
   homepage "https://github.com/grvmon/sniper-seo-geo-aeo"
-  url "https://github.com/grvmon/sniper-seo-geo-aeo/archive/refs/tags/v1.2.0.tar.gz"
+  url "https://github.com/grvmon/sniper-seo-geo-aeo/archive/refs/tags/v1.3.0.tar.gz"
   license "MIT"
 
   depends_on "curl"

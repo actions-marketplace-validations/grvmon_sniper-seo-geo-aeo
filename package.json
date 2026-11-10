@@ -1,7 +1,7 @@
 {
   "name": "@grvmon/sniper-seo-geo-aeo",
   "version": "1.3.0",
-  "description": "Zero-hallucination SEO, GEO and AEO audits: verifies live pages, scores AI citability, removes robotic content, and drafts copy-paste fixes for Google, ChatGPT, and Perplexity.",
+  "description": "Verifies how Google, ChatGPT, and Perplexity read your web pages. Checks bot access, schema, and answer extractability, then drafts clean fixes without fluff.",
   "author": "Gaurav Mongia (https://www.linkedin.com/in/gaurav-a-mongia)",
   "homepage": "https://github.com/grvmon/sniper-seo-geo-aeo",
   "repository": {
