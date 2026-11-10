@@ -1,6 +1,8 @@
 # Worked example: audit of a live page
 
-This is a complete worked audit of an enterprise SaaS platform page (`https://example.com/platform/data-pipeline/`). It demonstrates the end-to-end workflow: intake, technical verification with `scripts/verify-page.sh`, citability scoring, an evidence ledger, and production-ready remediation code to rank the page in Google and capture citations in AI answer engines.
+This is a complete worked audit of an enterprise SaaS platform page (`https://example.com/platform/data-pipeline/`). It demonstrates the end-to-end workflow: intake, technical verification with `scripts/verify-page.sh`, citability scoring, an evidence ledger, and draft remediation code to improve the page for Google and AI answer engines.
+
+> **Illustrative only.** `example.com` is a placeholder. No figure below was measured, and the retrieval dates and `verified` statuses show the format, not real evidence.
 
 ---
 
@@ -10,7 +12,7 @@ This is a complete worked audit of an enterprise SaaS platform page (`https://ex
 | --- | --- |
 | **URL** | `https://example.com/platform/data-pipeline/` |
 | **Market** | Global, English (US / EMEA). B2B Data Engineering & DevOps leads. |
-| **Intent** | Commercial Investigation. Primary query: "real-time data pipeline architecture". The user is evaluating architecture patterns and platform capabilities. |
+| **Intent** | Commercial Landing Page (SERP format match not checked: `NT`). Primary query: "real-time data pipeline architecture". The user is evaluating architecture patterns and platform capabilities. |
 | **Competitors** | `https://competitor-a.com/data-pipeline/`, `https://competitor-b.com/stream-processing/` |
 | **Access** | Public URL, live HTTP response, Google Search Console (read access), Bing Webmaster Tools (read access). Server logs: NT. |
 | **Baseline** | Google Search Console: 1,420 monthly clicks, average position 8.4 on primary keyword. Zero AI Overview citations detected in weekly citation sampling. |
@@ -41,7 +43,7 @@ Crawler access summary from `scripts/verify-page.sh`:
 | **Googlebot, Bingbot** | Search | `*` | allow | Eligible for Google Search, AI Overviews, and Bing Copilot. |
 | **OAI-SearchBot, Claude-SearchBot, PerplexityBot** | Search | own group | allow | Eligible for ChatGPT search, Claude search, and Perplexity indexation. |
 | **ChatGPT-User, Claude-User, Perplexity-User** | User | own group | allow | Permitted to fetch on direct user prompt. |
-| **GPTBot, Google-Extended, ClaudeBot** | Training | own group | undecided | Stance pending owner sign-off. |
+| **GPTBot, Google-Extended, ClaudeBot** | Training | `*` | allow (implicit) | No group of their own, so they inherit `*`. Record the owner's choice as `undecided` until they decide. |
 
 ---
 
@@ -52,17 +54,19 @@ Sample is the first 8 H2 headings and the first 8 body paragraphs of at least 20
 | Category | Points | Weight | Evidence / Calculation |
 | --- | :---: | :---: | --- |
 | **answer** | 8/10 | 30 | 6 of 8 H2s lead with an explicit conclusion in the first sentence. `floor(10 × 6 / 8 + 0.5) = 8`. |
-| **contain** | 7/10 | 25 | 6 of 8 sampled paragraphs are self-contained with explicit referents (no dangling pronouns). `floor(10 × 6 / 8 + 0.5) = 7` (rounded from 7.5). |
-| **structure** | 9/10 | 20 | Single H1, logical H2/H3 nesting, architectural comparison table present, bulleted step list for setup. Deducted 1 point for 1 skipped H4 tag. |
+| **contain** | 8/10 | 20 | 6 of 8 sampled paragraphs are self-contained with explicit referents (no dangling pronouns). `floor(10 × 6 / 8 + 0.5) = 8`. |
+| **structure** | 8/10 | 20 | Single H1, logical nesting, architectural comparison table present, bulleted step list for setup. Subtracted 2 points for one skipped heading level (H2 to H4). |
 | **sourced** | 7/10 | 15 | 5 of 7 benchmark metrics cite primary datasets (Kafka throughput specs, AWS latency figures, public benchmark repo). `floor(10 × 5 / 7 + 0.5) = 7`. |
-| **original** | 10/10 | 10 | Includes proprietary benchmark latency graph and reproducible GitHub test repo absent from all competitor pages. |
+| **original** | 10/10 | 15 | Includes proprietary benchmark latency graph and reproducible GitHub test repo absent from all competitor pages. |
 
 ```
-raw = (8/10 × 30) + (7/10 × 25) + (9/10 × 20) + (7/10 × 15) + (10/10 × 10)
-    = 24.0 + 17.5 + 18.0 + 10.5 + 10.0 = 80.0
-coverage = 30 + 25 + 20 + 15 + 10 = 100
-overall = floor(100 × 80.0 / 100 + 0.5) = 80
+raw = (8/10 × 30) + (8/10 × 20) + (8/10 × 20) + (7/10 × 15) + (10/10 × 15)
+    = 24.0 + 16.0 + 16.0 + 10.5 + 15.0 = 81.5
+coverage = 30 + 20 + 20 + 15 + 15 = 100
+overall = floor(100 × 81.5 / 100 + 0.5) = 82
 ```
+
+`answer`, `contain` and `original` are rater-judged proxies. Compare scores only across runs that use the same method.
 
 ---
 
@@ -70,9 +74,9 @@ overall = floor(100 × 80.0 / 100 + 0.5) = 80
 
 | Rank | Fix | Impact | Effort | Evidence ID |
 | :---: | --- | :---: | :---: | :---: |
-| **1** | **Rewrite Title & Meta for Search Intent:** Current title is 38 chars ("Data Pipeline Platform"). Optimize to 58 chars with front-loaded primary keyword ("Real-Time Data Pipeline Architecture: Complete Engineering Guide") to boost SERP CTR. | High | Low | L1, L8 |
-| **2** | **Direct Answer Snippet Block:** Add a 45-word standalone direct answer paragraph under the H1 with an `#direct-answer` container to capture Google AI Overview and Perplexity lead citations. | High | Low | L2, L9 |
-| **3** | **Clean JSON-LD Schema Discrepancies:** Remove 2 unrendered FAQ nodes and synchronize `Organization` phone/address with visible footer text to prevent structured data manual action. | Med | Low | L3, L4 |
+| **1** | **Rewrite Title & Meta for Search Intent:** Current title is 22 chars ("Data Pipeline Platform") and does not name the primary query. Rewrite it at 60 chars with the keyword up front ("Real-Time Data Pipeline Architecture: 2026 Engineering Guide") so the snippet says what the page covers. | High | Low | L1, L8 |
+| **2** | **Direct Answer Snippet Block:** Add a standalone answer paragraph (about 44 words) under the H1 in a `#direct-answer` container so the page states its conclusion in a quotable passage. | High | Low | L2, L9 |
+| **3** | **Clean JSON-LD Schema Discrepancies:** Remove 2 unrendered FAQ nodes and synchronize `Organization` phone/address with visible footer text so the markup matches what readers see. | Med | Low | L3, L4 |
 
 ---
 
@@ -81,13 +85,13 @@ overall = floor(100 × 80.0 / 100 + 0.5) = 80
 | Id | Claim | Evidence | Source | Retrieved | Status |
 | --- | --- | --- | --- | --- | --- |
 | **L1** | Page returns 200, is self-canonical, and is in sitemap | `http_status: 200`, `canonical_matches_final: yes`, `in_sitemap: yes` | `scripts/verify-page.sh` | 2026-11-10 | verified |
-| **L2** | Citability overall score is 80 with coverage 100 | Arithmetic detailed in Citability section | Audit pass | 2026-11-10 | verified |
-| **L3** | 2 of 5 `FAQPage` questions in JSON-LD are absent from visible body text | JSON-LD schema compared against visible HTML text | `scripts/verify-page.sh` | 2026-11-10 | verified |
-| **L4** | Phone number `+1-800-555-0199` in JSON-LD does not exist in visible footer | On-page visible text scan vs Organization schema | `scripts/verify-page.sh` | 2026-11-10 | verified |
+| **L2** | Citability overall score is 82 with coverage 100 | Arithmetic detailed in Citability section | Audit pass | 2026-11-10 | verified |
+| **L3** | 2 of 5 `FAQPage` questions in JSON-LD are absent from visible body text | JSON-LD compared with visible HTML by hand | Manual review | 2026-11-10 | verified |
+| **L4** | Phone number `+1-800-555-0199` in JSON-LD does not exist in visible footer | Visible footer compared with Organization schema by hand | Manual review | 2026-11-10 | verified |
 | **L5** | Robots.txt allows all major search and answer engine crawlers | `robots_agent` output for Googlebot, Bingbot, OAI-SearchBot, PerplexityBot | `https://example.com/robots.txt` | 2026-11-10 | verified |
 | **L6** | Google Search Console baseline: 1,420 monthly clicks, position 8.4 | Search Performance report (last 28 days) | Google Search Console | 2026-11-10 | verified |
 | **L7** | Core Web Vitals meet official good thresholds (LCP: 1.8s, INP: 85ms, CLS: 0.02) | Chrome UX Report (CrUX) 75th percentile field data | Google Search Console | 2026-11-10 | verified |
-| **L8** | Title length currently 38 chars; truncation risk is low but keyword salience is weak | Title tag string analysis | `scripts/verify-page.sh` | 2026-11-10 | verified |
+| **L8** | Title is 22 chars, under the 30-char lint minimum, and does not name the primary query | `title_chars: 22`, `title_status: warn` | `scripts/verify-page.sh` | 2026-11-10 | verified |
 | **L9** | Lead answer paragraph contains no plain-text label prefix | `first_p_label_prefix: no` | `scripts/verify-page.sh` | 2026-11-10 | verified |
 | **L10** | Original benchmark methodology is published on GitHub with MIT license | Visible repository link on page | `https://github.com/example/stream-benchmarks` | 2026-11-10 | verified |
 
@@ -98,10 +102,10 @@ overall = floor(100 × 80.0 / 100 + 0.5) = 80
 ### A. Title & Meta Description (Copy-Paste)
 
 ```html
-<!-- Proposed Title (58 chars, front-loaded keyword, strong CTR hook) -->
+<!-- Proposed Title (60 chars, front-loaded keyword) -->
 <title>Real-Time Data Pipeline Architecture: 2026 Engineering Guide</title>
 
-<!-- Proposed Meta Description (148 chars, active value proposition, SERP optimized) -->
+<!-- Proposed Meta Description (150 chars, accurate summary of the page) -->
 <meta name="description" content="Explore real-time data pipeline architecture patterns, throughput benchmarks, and end-to-end stream processing frameworks with verified code examples.">
 ```
 
@@ -111,7 +115,7 @@ overall = floor(100 × 80.0 / 100 + 0.5) = 80
 <section class="lead-summary-card" aria-label="Executive Summary">
   <p class="lead-text" id="direct-answer">
     <strong class="eyebrow">Architecture Summary</strong>
-    A real-time data pipeline ingests, transforms, and delivers continuous event streams with sub-second latency using distributed message brokers (such as Apache Kafka), stream processing compute engines, and sink destinations. This architecture eliminates batch lag and guarantees transactional data freshness across distributed systems.
+    A real-time data pipeline ingests, transforms, and delivers continuous event streams with sub-second latency using distributed message brokers (such as Apache Kafka), stream processing compute engines, and sink destinations. Compared with batch jobs, it shortens the delay between an event and its availability downstream.
   </p>
 </section>
 ```
