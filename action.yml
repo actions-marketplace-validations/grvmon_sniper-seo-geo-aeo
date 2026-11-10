@@ -13,6 +13,10 @@ inputs:
     description: 'Emulate Googlebot Smartphone User-Agent (true/false)'
     required: false
     default: 'false'
+  format:
+    description: 'Output format: plain, json, or report'
+    required: false
+    default: 'plain'
 
 outputs:
   output:
@@ -27,7 +31,12 @@ runs:
       run: |
         FLAG=""
         if [ "${{ inputs.googlebot }}" = "true" ]; then
-          FLAG="-g"
+          FLAG="$FLAG -g"
+        fi
+        if [ "${{ inputs.format }}" = "json" ]; then
+          FLAG="$FLAG -j"
+        elif [ "${{ inputs.format }}" = "report" ]; then
+          FLAG="$FLAG -r"
         fi
         OUT=$(bash "${{ github.action_path }}/scripts/verify-page.sh" $FLAG "${{ inputs.url }}")
         echo "$OUT"

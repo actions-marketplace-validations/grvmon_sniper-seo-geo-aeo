@@ -2,16 +2,16 @@
 
 All notable changes to this skill are documented here. The package version follows [Semantic Versioning](https://semver.org/).
 
-## Unreleased
+## 1.3.0 - 2026-11-11
 
+- Feat(cli): added `-j` / `--json` flag to `scripts/verify-page.sh` for structured JSON output.
+- Feat(cli): added `-r` / `--report` flag to `scripts/verify-page.sh` to generate an executive Markdown summary report.
+- Feat(headings): added DOM heading hierarchy audit across `h1` through `h6` (`h1_status` and `heading_hierarchy`), detecting missing H1s, multiple H1s, and skipped heading levels.
+- Feat(citability): added direct answer passage evaluation (`first_p_words`, `first_p_chars`, and `first_p_answer_ready` for optimal 35–65 word snippets).
+- Feat(actions): updated `action.yml` to accept `format: 'plain' | 'json' | 'report'`.
 - Feat(distribution): added `"bin": { "sniper-seo": "./scripts/verify-page.sh" }` for direct CLI execution via `npx @grvmon/sniper-seo-geo-aeo`.
-- Feat(actions): added official GitHub Action definition (`action.yml`) for automated CI/CD page audits.
 - Feat(brew): added Homebrew formula template (`formula/sniper-seo.rb`).
-- Harden `scripts/verify-page.sh` and tests for static scanners: follow-up fetches use urllib (no subprocess), temp dirs are removed with a scoped cleanup instead of `rm -rf`, the Googlebot UA uses a full Chrome version string, and tests bind to `localhost` rather than a numeric loopback address.
-- Fix(llms.txt): detect SPA/catch-all servers returning HTML under HTTP 200 for `/llms.txt` and report `warn: soft_404 (returned html fallback)` instead of a false-positive valid status.
-- Feat(opengraph): extract `og:title`, `og:description`, and `og:image` and report `og_title_matches_title`.
-- Feat(schema): detect duplicate root entity types declared across multiple disconnected JSON-LD blocks (`schema_duplicate_types`).
-- Tests: added 3 new fixture tests for `llms.txt` HTML fallback, OpenGraph parsing, and multi-block duplicate schema types (48 tests passing).
+- Tests: added 6 new automated test scenarios covering heading hierarchy, direct answer passage readiness, `--json` schema validation, and `--report` Markdown formatting (54 tests passing).
 
 ## 1.2.0 - 2026-11-10
 

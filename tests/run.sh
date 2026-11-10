@@ -65,6 +65,10 @@ scenario x /aicliche2 "extended cliche list detected" '^ai_cliche_count: 7' '^hu
 scenario llms_html /page "llms.txt html fallback flagged as soft 404" '^llms_txt_status: warn: soft_404 \(returned html fallback\)'
 scenario x /og "opengraph tags parsed and matched" '^og_title: OG Test Title Thirty Chars Long' '^og_title_matches_title: yes'
 scenario x /dupschema "duplicate schema types detected across blocks" '^schema_duplicate_types: warn: Organization \(blocks 1,2\)'
+scenario x /headings-good "heading hierarchy valid" '^h1_count: 1' '^h1_status: pass' '^heading_hierarchy: pass'
+scenario x /headings-skip "heading hierarchy skipped level" '^heading_hierarchy: warn: skipped levels \(h1->h3\)'
+scenario x /headings-noh1 "heading hierarchy missing h1" '^h1_count: 0' '^h1_status: warn: missing h1'
+scenario x /answer-ready "direct answer snippet ready" '^first_p_words: 45' '^first_p_answer_ready: yes \(45 words, optimal 35-65\)'
 
 # --- docs consistency: rubric weights, worked-example arithmetic, char counts ---
 if doc_out="$(python3 - "$DIR" << 'PY'
@@ -116,6 +120,30 @@ if grep -q '^user_agent: googlebot_smartphone' <<<"$out"; then
   ok "googlebot flag emulates googlebot smartphone"
 else
   bad "googlebot flag failed" "$out"
+fi
+
+# test json output flag
+pf="$(mktemp)"
+python3 "$DIR/tests/fixture_server.py" "x" "$pf" & pid=$!
+for _ in $(seq 50); do [[ -s "$pf" ]] && break; sleep 0.1; done
+json_out="$(bash "$VP" -j "http://localhost:$(cat "$pf")/page" 2>&1)"
+kill "$pid" 2>/dev/null; wait "$pid" 2>/dev/null; rm -f "$pf"
+if python3 -c "import json, sys; d = json.loads(sys.argv[1]); assert d['http']['status'] == '200' and 'metadata' in d and 'headings' in d" "$json_out" 2>/dev/null; then
+  ok "json flag produces valid structured schema"
+else
+  bad "json flag failed to produce valid json" "$json_out"
+fi
+
+# test report markdown output flag
+pf="$(mktemp)"
+python3 "$DIR/tests/fixture_server.py" "x" "$pf" & pid=$!
+for _ in $(seq 50); do [[ -s "$pf" ]] && break; sleep 0.1; done
+report_out="$(bash "$VP" -r "http://localhost:$(cat "$pf")/page" 2>&1)"
+kill "$pid" 2>/dev/null; wait "$pid" 2>/dev/null; rm -f "$pf"
+if grep -q '# Sniper SEO & AI Verification Report' <<<"$report_out" && grep -q '## 1. Technical & Indexation Health' <<<"$report_out"; then
+  ok "report flag produces formatted markdown executive summary"
+else
+  bad "report flag failed" "$report_out"
 fi
 
 # usage errors

@@ -4,21 +4,30 @@
 set -euo pipefail
 
 USE_GOOGLEBOT=0
+OUTPUT_FORMAT="plain"
 URL=""
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
     -h|--help)
-      echo "usage: verify-page.sh [-g|--googlebot] URL" >&2
+      echo "usage: verify-page.sh [-g|--googlebot] [-j|--json] [-r|--report] URL" >&2
       exit 2
       ;;
     -g|--googlebot)
       USE_GOOGLEBOT=1
       shift
       ;;
+    -j|--json)
+      OUTPUT_FORMAT="json"
+      shift
+      ;;
+    -r|--report)
+      OUTPUT_FORMAT="report"
+      shift
+      ;;
     http://*|https://*)
       if [[ -n "$URL" ]]; then
-        echo "usage: verify-page.sh [-g|--googlebot] URL" >&2
+        echo "usage: verify-page.sh [-g|--googlebot] [-j|--json] [-r|--report] URL" >&2
         exit 2
       fi
       URL="$1"
@@ -32,7 +41,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 if [[ -z "$URL" ]]; then
-  echo "usage: verify-page.sh [-g|--googlebot] URL" >&2
+  echo "usage: verify-page.sh [-g|--googlebot] [-j|--json] [-r|--report] URL" >&2
   exit 2
 fi
 
@@ -66,13 +75,30 @@ if ! curl -sS -L --proto =http,https --proto-redir =http,https --max-redirs 5 --
   exit 2
 fi
 
-python3 - "$URL" "$TMP" "$UA" << 'PY'
+python3 - "$URL" "$TMP" "$UA" "$OUTPUT_FORMAT" << 'PY'
 import json, re, sys, html, gzip, io, urllib.error, urllib.request
 from collections import defaultdict
 from html.parser import HTMLParser
 from urllib.parse import urljoin, urlparse
 
 page_url, tmp, ua = sys.argv[1], sys.argv[2], sys.argv[3]
+out_format = sys.argv[4] if len(sys.argv) > 4 else "plain"
+
+output_lines = []
+_real_print = print
+
+def log_print(*args, **kwargs):
+    if kwargs.get("file") is not None:
+        _real_print(*args, **kwargs)
+        return
+    sep = kwargs.get("sep", " ")
+    end = kwargs.get("end", "\n")
+    line = sep.join(str(a) for a in args)
+    output_lines.append(line)
+    if out_format == "plain":
+        _real_print(line, end=end)
+
+print = log_print
 meta = open(f"{tmp}/meta", encoding="utf-8").read().splitlines()
 final_url, status, redirects = meta[0], meta[1], meta[2]
 body = open(f"{tmp}/body", encoding="utf-8", errors="replace").read()
@@ -204,7 +230,7 @@ class Page(HTMLParser):
         if tag == "p":
             self.in_p = True
             self.p_buf = []
-        if tag in ("h1", "h2", "h3", "h4"):
+        if tag in ("h1", "h2", "h3", "h4", "h5", "h6"):
             if self.capture_after and self.h2_seen <= 8:
                 self.h2_follow.append(re.sub(r"\s+", " ", "".join(self.cur_follow)).strip())
                 self.capture_after = False
@@ -260,7 +286,7 @@ class Page(HTMLParser):
             if len(text.split()) >= 20:
                 self.paras.append(text)
             self.in_p = False
-        if tag in ("h1", "h2", "h3", "h4") and self.h_level:
+        if tag in ("h1", "h2", "h3", "h4", "h5", "h6") and self.h_level:
             text = re.sub(r"\s+", " ", "".join(self.h_buf)).strip()
             self.headings.append((self.h_level, text))
             if tag == "h2":
@@ -374,11 +400,27 @@ for i, c in enumerate(page.canonical, 1):
 if len(canon_unique) == 1:
     abs_c = canon_unique[0]
     c_status, _, _ = fetch_url(abs_c)
+    diff = canonical_diff(abs_c, final_url)
+    matches_final = norm(abs_c) == norm(final_url)
+    if not c_status.startswith("2"):
+        canonical_status = f"fail: fetch status {c_status}"
+    elif not matches_final:
+        canonical_status = f"warn: canonical differs ({diff})"
+    else:
+        canonical_status = "pass"
+    print(f"canonical_status: {canonical_status}")
     print(f"canonical_fetch_status: {c_status}")
-    print(f"canonical_matches_final: {'yes' if norm(abs_c) == norm(final_url) else 'no'}")
-    print(f"canonical_differs: {canonical_diff(abs_c, final_url)}")
+    print(f"canonical_matches_final: {'yes' if matches_final else 'no'}")
+    print(f"canonical_differs: {diff}")
 elif len(canon_unique) == 0:
-    print("canonical_status: warn: no canonical declared (Google will choose one itself)")
+    canonical_status = "warn: no canonical declared"
+    print(f"canonical_status: {canonical_status} (Google will choose one itself)")
+    print("canonical_fetch_status: nt")
+    print("canonical_matches_final: nt")
+    print("canonical_differs: nt")
+else:
+    canonical_status = f"warn: multiple canonical tags declared ({len(canon_unique)})"
+    print(f"canonical_status: {canonical_status}")
     print("canonical_fetch_status: nt")
     print("canonical_matches_final: nt")
     print("canonical_differs: nt")
@@ -419,7 +461,31 @@ if og_t:
     print(f"og_title_matches_title: {'yes' if og_t == title_text else 'no'}")
 
 h1s = [t for lvl, t in page.headings if lvl == 1]
-print(f"h1_count: {len(h1s)}")
+h1_count = len(h1s)
+if h1_count == 0:
+    h1_status = "warn: missing h1"
+elif h1_count == 1:
+    h1_status = "pass"
+else:
+    h1_status = f"warn: multiple h1 tags ({h1_count})"
+
+skipped_levels = []
+prev_lvl = 0
+for lvl, t in page.headings:
+    if prev_lvl > 0 and lvl > prev_lvl + 1:
+        skipped_levels.append(f"h{prev_lvl}->h{lvl}")
+    prev_lvl = lvl
+
+if not page.headings:
+    heading_hierarchy = "warn: no headings declared"
+elif skipped_levels:
+    heading_hierarchy = f"warn: skipped levels ({', '.join(skipped_levels[:3])})"
+else:
+    heading_hierarchy = "pass"
+
+print(f"h1_count: {h1_count}")
+print(f"h1_status: {h1_status}")
+print(f"heading_hierarchy: {heading_hierarchy}")
 for t in h1s[:3]:
     print(f"h1: {t}")
 print(f"hreflang_count: {page.hreflang}")
@@ -480,7 +546,20 @@ print("rendered_html: nt")
 LABEL_RX = re.compile(r"^\s*(direct answer|short answer|quick answer|answer|in short|summary|tl;?dr)\s*[:\-\u2013\u2014]", re.I)
 SCHEMA_LABEL_RX = re.compile(r"^\s*(direct answer|short answer|quick answer|answer|in short|summary|tl;?dr)\b", re.I)
 first_p = page.first_p or ""
-print(f"first_p_words: {len(first_p.split())}")
+first_p_words = len(first_p.split()) if first_p else 0
+first_p_chars = len(first_p) if first_p else 0
+if 35 <= first_p_words <= 65:
+    first_p_answer_ready = f"yes ({first_p_words} words, optimal 35-65)"
+elif first_p_words > 65:
+    first_p_answer_ready = f"no ({first_p_words} words, too long for concise snippet)"
+elif first_p_words > 0:
+    first_p_answer_ready = f"no ({first_p_words} words, too short for self-contained answer)"
+else:
+    first_p_answer_ready = "no (no paragraph found)"
+
+print(f"first_p_words: {first_p_words}")
+print(f"first_p_chars: {first_p_chars}")
+print(f"first_p_answer_ready: {first_p_answer_ready}")
 print(f"first_p_label_prefix: {'yes' if LABEL_RX.match(first_p) else 'no'}")
 
 def answer_texts(node):
@@ -656,6 +735,10 @@ for token, kind in agents:
     extra = notes.get(token, "")
     print(f"robots_agent: {token}\t{kind}\tgroup={used}\t{result}\t{why}\t{extra}".rstrip())
 
+locs_n = set()
+incomplete = False
+fetched = 0
+
 for s in sitemaps:
     print(f"sitemap_declared: {s}")
 if not sitemaps:
@@ -663,7 +746,7 @@ if not sitemaps:
     print("in_sitemap: nt")
 else:
     MAX_FILES, MAX_BYTES = 20, 50 * 1024 * 1024
-    queue, seen, locs_n, incomplete, fetched = list(sitemaps), set(), set(), False, 0
+    queue, seen = list(sitemaps), set()
     while queue:
         sm = queue.pop(0)
         if sm in seen:
@@ -706,4 +789,130 @@ if llms_status == "200" and is_html:
 else:
     print(f"llms_txt_status: {llms_status}")
 print("llms_txt: optional")
+
+if out_format == "json":
+    robots_agents_data = {}
+    for token, kind in agents:
+        if robots_mode == "nt":
+            robots_agents_data[token] = {"kind": kind, "group": None, "decision": "nt", "reason": "robots.txt not fetched"}
+        elif robots_mode == "allow_all":
+            robots_agents_data[token] = {"kind": kind, "group": "none", "decision": "allow", "reason": f"robots.txt {robots_status}"}
+        else:
+            used, result, why = decision(token, path)
+            robots_agents_data[token] = {"kind": kind, "group": used, "decision": result, "reason": why}
+
+    report_json = {
+        "url": page_url,
+        "final_url": final_url,
+        "http": {
+            "status": status,
+            "redirects": int(redirects) if str(redirects).isdigit() else 0,
+            "hops": hop_statuses,
+            "check": "pass" if status.startswith("2") else "fail",
+            "last_modified": last_modified,
+            "etag": etag
+        },
+        "metadata": {
+            "title": title_text,
+            "title_chars": len(title_text),
+            "title_status": t_status,
+            "description": desc_text,
+            "description_chars": len(desc_text),
+            "description_status": d_status,
+            "canonical": page.canonical,
+            "canonical_status": canonical_status,
+            "viewport": vp if vp else None,
+            "viewport_status": vp_status,
+            "opengraph": {
+                "title": og_t,
+                "description": og_d,
+                "image": og_img,
+                "title_matches_title": (og_t == title_text) if og_t else None
+            }
+        },
+        "headings": {
+            "h1_count": h1_count,
+            "h1_status": h1_status,
+            "h1": h1s[0] if h1s else None,
+            "heading_hierarchy": heading_hierarchy,
+            "total_headings": len(page.headings),
+            "items": [{"level": lvl, "text": t} for lvl, t in page.headings]
+        },
+        "content": {
+            "visible_words": len(words_list),
+            "visible_chars": len(text),
+            "first_p": first_p,
+            "first_p_words": first_p_words,
+            "first_p_char_count": first_p_chars,
+            "first_p_answer_ready": first_p_answer_ready,
+            "first_p_label_prefix": bool(LABEL_RX.match(first_p)),
+            "ai_cliche_count": len(ai_cliches),
+            "ai_cliche_matches": uniq_cliches if ai_cliches else [],
+            "humanize_status": f"warn: {len(ai_cliches)} AI cliché phrase(s) detected" if ai_cliches else "pass",
+            "soft_404_suspect": is_soft_404
+        },
+        "schema": {
+            "jsonld_blocks": len(page.ld),
+            "duplicate_types": dups,
+            "schema_duplicate_status": f"warn: {'; '.join(dups)}" if dups else "none",
+            "schema_answers": schema_answers,
+            "schema_answer_label_prefix": schema_labelled
+        },
+        "robots": {
+            "path": path,
+            "status": robots_status,
+            "agents": robots_agents_data
+        },
+        "sitemaps": {
+            "declared": list(sitemaps),
+            "files_read": fetched if sitemaps else 0,
+            "url_count": len(locs_n) if sitemaps else 0,
+            "in_sitemap": "yes" if norm(final_url) in locs_n else ("nt" if incomplete else "no")
+        },
+        "images": {
+            "total": page.img_count,
+            "missing_alt": page.img_missing_alt,
+            "lazy": page.img_lazy
+        },
+        "llms_txt": {
+            "status": llms_status,
+            "is_soft_404": (llms_status == "200" and is_html)
+        }
+    }
+    _real_print(json.dumps(report_json, indent=2))
+elif out_format == "report":
+    md = []
+    md.append("# Sniper SEO & AI Verification Report")
+    md.append("")
+    md.append(f"**Target URL:** `{page_url}`  ")
+    md.append(f"**Final URL:** `{final_url}`  ")
+    md.append(f"**HTTP Status:** `{status}` ({redirects} redirects) | **User-Agent:** `{'Googlebot Smartphone' if 'Googlebot' in ua else 'Default'}`")
+    md.append("")
+    md.append("## 1. Technical & Indexation Health")
+    md.append("| Audit Element | Result | Details |")
+    md.append("| :--- | :--- | :--- |")
+    md.append(f"| HTTP Response | {'PASS' if status.startswith('2') else 'FAIL'} | HTTP {status} (hop: {' '.join(hop_statuses) or 'none'}) |")
+    md.append(f"| Canonical Parity | {'PASS' if canonical_status == 'pass' else 'WARN'} | {canonical_status} |")
+    md.append(f"| Mobile Viewport | {'PASS' if vp_status == 'pass' else 'WARN'} | {vp_status} |")
+    md.append(f"| Robots.txt Access | {'PASS' if robots_status == '200' or robots_mode == 'allow_all' else 'WARN'} | Googlebot: {decision('Googlebot', path)[1] if robots_mode not in ('nt', 'allow_all') else ('allow' if robots_mode == 'allow_all' else 'nt')} |")
+    md.append(f"| Sitemap Inclusion | {'PASS' if norm(final_url) in locs_n else 'WARN'} | In sitemap: {'yes' if norm(final_url) in locs_n else ('nt' if incomplete else 'no')} ({len(locs_n)} URLs) |")
+    md.append(f"| Soft 404 Guard | {'PASS' if not is_soft_404 else 'FAIL'} | Suspect: {'yes' if is_soft_404 else 'no'} |")
+    md.append("")
+    md.append("## 2. Headings & AI Citation Structure")
+    md.append("| Metric | Status | Finding |")
+    md.append("| :--- | :--- | :--- |")
+    md.append(f"| H1 Tag | {h1_status.upper()} | {h1s[0] if h1s else '(none)'} |")
+    md.append(f"| Heading Hierarchy | {heading_hierarchy.upper()} | {len(page.headings)} total headings across DOM |")
+    md.append(f"| Direct Answer Passage | {'YES' if 'yes' in first_p_answer_ready else 'NO'} | {first_p_answer_ready} |")
+    md.append(f"| AI Cliché Lint | {'PASS' if not ai_cliches else 'WARN'} | {len(ai_cliches)} cliché phrase(s) detected |")
+    md.append(f"| Schema.org Markup | {'PASS' if not dups else 'WARN'} | {len(page.ld)} blocks, duplicate types: {'; '.join(dups) if dups else 'none'} |")
+    md.append("")
+    md.append("## 3. Snippet & OpenGraph Parity")
+    md.append(f"* **Title ({len(title_text)} chars):** `{title_text or '(none)'}` ({t_status})")
+    md.append(f"* **Meta Description ({len(desc_text)} chars):** `{desc_text or '(none)'}` ({d_status})")
+    if og_t:
+        md.append(f"* **OpenGraph Title:** `{og_t}` (matches title: {'yes' if og_t == title_text else 'no'})")
+    if og_img:
+        md.append(f"* **OpenGraph Image:** `{og_img}`")
+    _real_print("\n".join(md))
 PY

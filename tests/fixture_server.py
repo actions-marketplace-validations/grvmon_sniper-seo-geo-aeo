@@ -98,6 +98,15 @@ class H(http.server.BaseHTTPRequestHandler):
             b1 = '<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","name":"Acme"}]}</script>'
             b2 = '<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","name":"Acme Inc"},{"@type":"WebSite","name":"Acme Web"}]}</script>'
             return self.send(200, '<html><head><title>Schema Test Page Title Thirty Chars</title>%s%s</head><body><h1>H</h1><p>Sample text with more than twenty words.</p></body></html>' % (b1, b2))
+        if p == "/headings-good":
+            return self.send(200, '<html><head><title>Headings Test Page Thirty Characters</title></head><body><h1>Main Title</h1><h2>Section 1</h2><h3>Detail 1</h3><p>Text</p></body></html>')
+        if p == "/headings-skip":
+            return self.send(200, '<html><head><title>Headings Skip Page Thirty Characters</title></head><body><h1>Main Title</h1><h3>Skipped to H3</h3><p>Text</p></body></html>')
+        if p == "/headings-noh1":
+            return self.send(200, '<html><head><title>Headings No H1 Page Thirty Chars</title></head><body><h2>Only H2 Here</h2><p>Text</p></body></html>')
+        if p == "/answer-ready":
+            p_text = "An allotment letter is a legally binding document issued by a developer confirming the booking of a specific property unit, floor plan, and financial payment schedule. It acts as primary legal evidence of ownership allocation prior to the execution of the final sale deed agreement."
+            return self.send(200, '<html><head><title>Answer Ready Page Thirty Chars Long</title></head><body><h1>Guide</h1><p>%s</p></body></html>' % p_text)
         if p.startswith("/canq"):
             return self.send(200, PAGE % '<link rel="canonical" href="/canq?a=1">')
         return self.send(200, PAGE % "")

@@ -34,7 +34,18 @@ Google indexes the mobile version of websites. Emulate the official Googlebot Sm
 bash scripts/verify-page.sh -g 'https://example.com/platform/data-pipeline/'
 ```
 
-### 1.3 How to Read the Output
+### 1.3 Structured JSON & Markdown Reports
+
+* **Structured JSON (`-j` / `--json`):** Output machine-readable JSON for CI/CD pipelines, monitoring scripts, and agents:
+  ```bash
+  bash scripts/verify-page.sh -j 'https://example.com/guide/'
+  ```
+* **Executive Markdown Report (`-r` / `--report`):** Output a formatted Markdown summary table ready for PRs or client deliverables:
+  ```bash
+  bash scripts/verify-page.sh -r 'https://example.com/guide/'
+  ```
+
+### 1.4 How to Read the Output
 
 The script outputs line-by-line factual evidence or `nt` (not tested). Look for these critical signals:
 
@@ -47,6 +58,8 @@ The script outputs line-by-line factual evidence or `nt` (not tested). Look for 
 | `title_status: pass` | Title length falls between 30 and 65 characters. | `pass` (prevents SERP truncation) |
 | `meta_description_status: pass`| Meta description falls between 70 and 160 characters. | `pass` |
 | `og_title_matches_title: yes` | Checks if OpenGraph title matches HTML `<title>`. | `yes` (ensures consistency) |
+| `heading_hierarchy: pass` | Evaluates DOM heading structure (H1 through H6) for skipped levels. | `pass` (valid outline) |
+| `first_p_answer_ready: yes` | Evaluates lead paragraph for 35–65 word AI summary snippet. | `yes` (optimal answer length) |
 | `viewport_status: pass` | Checks for `width=device-width` viewport tag. | `pass` (mobile readiness) |
 | `soft_404_suspect: no` | Flags HTTP 200 responses that are actually error pages. | `no` |
 | `ai_cliche_count: 0` | Scans for 19 formulaic generative AI phrases. | `0` (`humanize_status: pass`) |

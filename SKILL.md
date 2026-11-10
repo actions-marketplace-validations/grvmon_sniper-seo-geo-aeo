@@ -49,8 +49,13 @@ Stop and fill this in before recommending changes. Use `NT` for unknown fields.
 Run the verification check with `bash` and the skill's absolute path, from any working directory. Use optional `-g` or `--googlebot` to emulate the official Googlebot Smartphone User-Agent:
 
 ```bash
+# Standard verification:
 bash <skill-dir>/scripts/verify-page.sh 'https://example.com/page/'
-# Or emulate Googlebot Smartphone User-Agent:
+# Structured JSON output:
+bash <skill-dir>/scripts/verify-page.sh -j 'https://example.com/page/'
+# Executive Markdown summary report:
+bash <skill-dir>/scripts/verify-page.sh -r 'https://example.com/page/'
+# Emulate Googlebot Smartphone User-Agent:
 bash <skill-dir>/scripts/verify-page.sh -g 'https://example.com/page/'
 ```
 
@@ -67,12 +72,14 @@ Then evaluate these checks. Each is `pass`, `fail`, or `NT`.
 4. **Sitemap.** The URL is in a sitemap declared from `robots.txt`. The script reads declared sitemaps, expands indexes, and unzips `.gz`, up to 20 files. Membership is `NT` when any file failed or the cap was hit.
 5. **Schema.** JSON-LD parses without syntax errors. Every value is visible on the page and true. `schema_duplicate_types` flags duplicate root entities declared across separate blocks. `sameAs` URLs were opened and name the same entity. See `references/schema.md`.
 6. **Title, meta & OpenGraph snippet health.** `title_status` checks length (30–65 chars optimal for Google SERP display without truncation). `meta_description_status` checks length (70–160 chars optimal). The script extracts `og:title`, `og:description`, and `og:image` and verifies `og_title_matches_title`.
-7. **Mobile-first & viewport.** Google indexes the mobile version of a page. `viewport_status` checks for `width=device-width` in the viewport meta tag. A missing tag is a mobile usability risk; it is not a documented ranking penalty.
-8. **Soft 404 detection.** `soft_404_suspect` flags 200 OK pages containing "not found / error" text or thin content (< 25 words). Google describes soft 404s as error-like pages served with a 200; this check is a heuristic lead and can false-positive on stubs, so confirm in URL Inspection.
-9. **Content humanization & anti-AI cadence.** `humanize_status` scans visible text for formulaic AI clichés (*"in today's digital landscape"*, *"delve into"*, *"tapestry"*, *"testament to"*, *"pivotal role"*) so a human can edit them. This is a style lint, not a ranking test: Google does not document a filter for these phrases, and a hit is a prompt to review the sentence, not a failure. The script checks every phrase in `references/humanize.md` except the stacked-connector row, which needs paragraph context.
-10. **Image SEO.** The script reports `img_count`, `img_missing_alt`, and `img_lazy_count`. Images must include descriptive alt text and explicit aspect ratios to prevent CLS and rank in Google Images.
-11. **Crawl caching & freshness.** Reports `last_modified` and `etag` headers used by Googlebot for conditional HTTP 304 crawl budget savings.
-12. **Internal links and orphans.** Count same-host links on the page. An orphan is a sitemap URL with no internal link from the crawled set. Without that crawl, orphan status is `NT`.
+7. **Heading hierarchy & outline.** `h1_status` checks for a single descriptive H1 tag. `heading_hierarchy` audits `<h1-h6>` tags across the DOM to detect missing H1s, multiple H1s, or skipped heading levels (e.g. `h1->h3`).
+8. **Mobile-first & viewport.** Google indexes the mobile version of a page. `viewport_status` checks for `width=device-width` in the viewport meta tag. A missing tag is a mobile usability risk; it is not a documented ranking penalty.
+9. **Soft 404 detection.** `soft_404_suspect` flags 200 OK pages containing "not found / error" text or thin content (< 25 words). Google describes soft 404s as error-like pages served with a 200; this check is a heuristic lead and can false-positive on stubs, so confirm in URL Inspection.
+10. **Direct answer passage readiness.** `first_p_words` and `first_p_answer_ready` evaluate whether the lead paragraph provides a self-contained 35–65 word passage suitable for Google AI Overviews and ChatGPT citation summaries.
+11. **Content humanization & anti-AI cadence.** `humanize_status` scans visible text for formulaic AI clichés (*"in today's digital landscape"*, *"delve into"*, *"tapestry"*, *"testament to"*, *"pivotal role"*) so a human can edit them. This is a style lint, not a ranking test: Google does not document a filter for these phrases, and a hit is a prompt to review the sentence, not a failure. The script checks every phrase in `references/humanize.md` except the stacked-connector row, which needs paragraph context.
+12. **Image SEO.** The script reports `img_count`, `img_missing_alt`, and `img_lazy_count`. Images must include descriptive alt text and explicit aspect ratios to prevent CLS and rank in Google Images.
+13. **Crawl caching & freshness.** Reports `last_modified` and `etag` headers used by Googlebot for conditional HTTP 304 crawl budget savings.
+14. **Internal links and orphans.** Count same-host links on the page. An orphan is a sitemap URL with no internal link from the crawled set. Without that crawl, orphan status is `NT`.
 
 A site's own house style, if any, lives in a separate reference file and is applied only to that site. See `references/house-rules-template.md`.
 

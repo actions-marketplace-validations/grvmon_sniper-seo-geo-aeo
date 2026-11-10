@@ -115,8 +115,16 @@ Search, user-triggered fetch, and training are different jobs. Leave every train
 Run verification directly in any terminal:
 
 ```bash
+# Standard on-page verification:
 npx @grvmon/sniper-seo-geo-aeo 'https://example.com/guide/'
-# Or emulate Googlebot Smartphone User-Agent:
+
+# Output structured JSON (for scripts/pipelines):
+npx @grvmon/sniper-seo-geo-aeo -j 'https://example.com/guide/'
+
+# Output executive Markdown report:
+npx @grvmon/sniper-seo-geo-aeo -r 'https://example.com/guide/'
+
+# Emulate Googlebot Smartphone User-Agent:
 npx @grvmon/sniper-seo-geo-aeo -g 'https://example.com/guide/'
 ```
 
@@ -138,6 +146,8 @@ Add automated SEO/GEO verification to your deployment workflows:
   with:
     url: 'https://preview.example.com/page/'
     googlebot: 'true'
+    format: 'report' # 'plain' (default), 'json', or 'report'
+```
 ```
 
 ### 4. Direct Agent Installation
