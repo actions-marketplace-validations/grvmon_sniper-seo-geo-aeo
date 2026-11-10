@@ -62,6 +62,9 @@ FIXTURE_ROBOTS=$'User-agent:   GPTBot   # training\nDisallow: /page # x\n' scena
 scenario robots5xx /page "robots 5xx is nt, not allow" '^robots_txt_status: 503' $'^robots_agent: GPTBot\ttraining\tnt'
 scenario x /page "missing canonical is a warn" '^canonical_status: warn: no canonical declared'
 scenario x /aicliche2 "extended cliche list detected" '^ai_cliche_count: 7' '^humanize_status: warn'
+scenario llms_html /page "llms.txt html fallback flagged as soft 404" '^llms_txt_status: warn: soft_404 \(returned html fallback\)'
+scenario x /og "opengraph tags parsed and matched" '^og_title: OG Test Title Thirty Chars Long' '^og_title_matches_title: yes'
+scenario x /dupschema "duplicate schema types detected across blocks" '^schema_duplicate_types: warn: Organization \(blocks 1,2\)'
 
 # --- docs consistency: rubric weights, worked-example arithmetic, char counts ---
 if doc_out="$(python3 - "$DIR" << 'PY'

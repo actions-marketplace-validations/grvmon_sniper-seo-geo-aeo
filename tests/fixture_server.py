@@ -32,6 +32,10 @@ class H(http.server.BaseHTTPRequestHandler):
             return self.send(200, os.environ.get("FIXTURE_ROBOTS", ""), "text/plain")
         if p == "/robots.txt" and m == "robots5xx":
             return self.send(503, "unavailable", "text/plain")
+        if p == "/llms.txt" and m == "llms_html":
+            return self.send(200, "<!DOCTYPE html><html><body>Fallback</body></html>", "text/html")
+        if p == "/llms.txt" and m == "llms_ok":
+            return self.send(200, "# Title\n\n> LLM documentation", "text/markdown")
         if p == "/robots.txt":
             body = {
                 "blankline": "User-agent: GPTBot\n\nDisallow: /\n",
@@ -88,6 +92,12 @@ class H(http.server.BaseHTTPRequestHandler):
             return self.send(200, "<html><head><title>AI Test Page Title Long Enough Here</title></head><body><h1>Guide</h1><p>In today's fast-paced digital landscape, it is a crucial role to delve into data pipelines.</p></body></html>")
         if p == "/aicliche2":
             return self.send(200, "<html><head><title>AI Test Page Two Title Long Enough</title></head><body><h1>Guide</h1><p>When it comes to pipelines, it is important to remember that a plethora of tools is a double-edged sword. Needless to say, in conclusion, nothing is revolutionary.</p></body></html>")
+        if p == "/og":
+            return self.send(200, '<html><head><title>OG Test Title Thirty Chars Long</title><meta property="og:title" content="OG Test Title Thirty Chars Long"><meta property="og:description" content="Social Description exceeding seventy characters in total length for verification purposes."><meta property="og:image" content="https://example.com/og.png"></head><body><h1>H</h1><p>Sample text with more than twenty words to test OpenGraph tags accurately.</p></body></html>')
+        if p == "/dupschema":
+            b1 = '<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","name":"Acme"}]}</script>'
+            b2 = '<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","name":"Acme Inc"},{"@type":"WebSite","name":"Acme Web"}]}</script>'
+            return self.send(200, '<html><head><title>Schema Test Page Title Thirty Chars</title>%s%s</head><body><h1>H</h1><p>Sample text with more than twenty words.</p></body></html>' % (b1, b2))
         if p.startswith("/canq"):
             return self.send(200, PAGE % '<link rel="canonical" href="/canq?a=1">')
         return self.send(200, PAGE % "")

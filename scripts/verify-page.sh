@@ -58,6 +58,7 @@ fi
 
 python3 - "$URL" "$TMP" "$UA" << 'PY'
 import json, re, sys, html, subprocess, gzip, io
+from collections import defaultdict
 from html.parser import HTMLParser
 from urllib.parse import urljoin, urlparse
 
@@ -157,6 +158,9 @@ class Page(HTMLParser):
         self.img_count = 0
         self.img_missing_alt = 0
         self.img_lazy = 0
+        self.og_title = None
+        self.og_desc = None
+        self.og_image = None
 
     def handle_starttag(self, tag, attrs):
         a = {k.lower(): (v or "") for k, v in attrs}
@@ -185,6 +189,7 @@ class Page(HTMLParser):
             self.hreflang += 1
         if tag == "meta":
             name = a.get("name", "").lower()
+            prop = a.get("property", "").lower() or name
             if name == "viewport":
                 self.viewport = a.get("content", "").strip()
             elif name in ("robots", "googlebot", "bingbot"):
@@ -193,6 +198,12 @@ class Page(HTMLParser):
                 self.robots_other.append(f"{name}: {a.get('content', '')}")
             elif name == "description":
                 self.meta_desc.append(a.get("content", ""))
+            if prop == "og:title":
+                self.og_title = a.get("content", "").strip()
+            elif prop == "og:description":
+                self.og_desc = a.get("content", "").strip()
+            elif prop == "og:image":
+                self.og_image = a.get("content", "").strip()
         if tag == "a" and a.get("href"):
             self.links.add(a["href"])
         if tag == "img":
@@ -371,6 +382,15 @@ else:
     d_status = "pass"
 print(f"meta_description_status: {d_status}")
 
+og_t = page.og_title or ""
+og_d = page.og_desc or ""
+og_img = page.og_image or ""
+print(f"og_title: {og_t if og_t else '(none)'}")
+print(f"og_description: {og_d if og_d else '(none)'}")
+print(f"og_image: {og_img if og_img else '(none)'}")
+if og_t:
+    print(f"og_title_matches_title: {'yes' if og_t == title_text else 'no'}")
+
 h1s = [t for lvl, t in page.headings if lvl == 1]
 print(f"h1_count: {len(h1s)}")
 for t in h1s[:3]:
@@ -450,6 +470,7 @@ def answer_texts(node):
             yield from answer_texts(v)
 
 schema_answers, schema_labelled = 0, 0
+type_blocks = defaultdict(list)
 print(f"jsonld_blocks: {len(page.ld)}")
 for i, raw in enumerate(page.ld, 1):
     try:
@@ -464,7 +485,10 @@ for i, raw in enumerate(page.ld, 1):
     types = []
     for n in items:
         if isinstance(n, dict):
-            types.append(str(n.get("@type")))
+            t = str(n.get("@type"))
+            types.append(t)
+            if i not in type_blocks[t]:
+                type_blocks[t].append(i)
     print(f"jsonld_{i}_types: {', '.join(types)}")
     for t in answer_texts(data):
         schema_answers += 1
@@ -473,6 +497,11 @@ for i, raw in enumerate(page.ld, 1):
             schema_labelled += 1
 print(f"schema_answer_texts: {schema_answers}")
 print(f"schema_answer_label_prefix: {schema_labelled}")
+dups = [f"{t} (blocks {','.join(map(str, bs))})" for t, bs in sorted(type_blocks.items()) if len(bs) > 1 and t != "None"]
+if dups:
+    print(f"schema_duplicate_types: warn: {'; '.join(dups)}")
+else:
+    print("schema_duplicate_types: none")
 
 print(f"internal_outlinks: {len(internal)}")
 for u in internal[:30]:
@@ -643,7 +672,11 @@ else:
         print(f"in_sitemap: {'nt' if incomplete else 'no'}")
 
 print("orphan_check: nt")
-llms_status, _, _ = curl_split(urljoin(origin, "/llms.txt"))
-print(f"llms_txt_status: {llms_status}")
+llms_status, llms_hdr, llms_body = curl_split(urljoin(origin, "/llms.txt"))
+is_html = "text/html" in llms_hdr.lower() or llms_body.lstrip().lower().startswith(("<!doctype", "<html"))
+if llms_status == "200" and is_html:
+    print("llms_txt_status: warn: soft_404 (returned html fallback)")
+else:
+    print(f"llms_txt_status: {llms_status}")
 print("llms_txt: optional")
 PY

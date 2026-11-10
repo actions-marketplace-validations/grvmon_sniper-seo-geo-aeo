@@ -2,6 +2,13 @@
 
 All notable changes to this skill are documented here. The package version follows [Semantic Versioning](https://semver.org/).
 
+## Unreleased
+
+- Fix(llms.txt): detect SPA/catch-all servers returning HTML under HTTP 200 for `/llms.txt` and report `warn: soft_404 (returned html fallback)` instead of a false-positive valid status.
+- Feat(opengraph): extract `og:title`, `og:description`, and `og:image` and report `og_title_matches_title`.
+- Feat(schema): detect duplicate root entity types declared across multiple disconnected JSON-LD blocks (`schema_duplicate_types`).
+- Tests: added 3 new fixture tests for `llms.txt` HTML fallback, OpenGraph parsing, and multi-block duplicate schema types (48 tests passing).
+
 ## 1.2.0 - 2026-11-10
 
 - Docs: removed unsourced claims (mobile demotions, AI-phrase filters, "primary discriminators"); `answer`, `contain` and `original` are marked rater-judged.
