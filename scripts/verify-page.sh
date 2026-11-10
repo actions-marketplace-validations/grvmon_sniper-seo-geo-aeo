@@ -117,6 +117,9 @@ class Page(HTMLParser):
         self.ld = []
         self.in_ld = False
         self.ld_buf = []
+        self.img_count = 0
+        self.img_missing_alt = 0
+        self.img_lazy = 0
 
     def handle_starttag(self, tag, attrs):
         a = {k.lower(): (v or "") for k, v in attrs}
@@ -153,6 +156,13 @@ class Page(HTMLParser):
                 self.meta_desc.append(a.get("content", ""))
         if tag == "a" and a.get("href"):
             self.links.add(a["href"])
+        if tag == "img":
+            self.img_count += 1
+            alt = a.get("alt")
+            if alt is None or not alt.strip():
+                self.img_missing_alt += 1
+            if "lazy" in a.get("loading", "").lower():
+                self.img_lazy += 1
 
     def handle_endtag(self, tag):
         if tag in ("script", "style"):
@@ -298,15 +308,40 @@ elif len(canon_unique) == 0:
 title_text = re.sub(r"\s+", " ", "".join(page.title)).strip()
 print(f"title: {title_text}")
 print(f"title_chars: {len(title_text)}")
+if len(title_text) == 0:
+    t_status = "fail: empty title"
+elif len(title_text) < 30:
+    t_status = "warn: under 30 chars (under-descriptive)"
+elif len(title_text) > 65:
+    t_status = "warn: over 65 chars (SERP truncation risk)"
+else:
+    t_status = "pass"
+print(f"title_status: {t_status}")
+
 desc_text = re.sub(r"\s+", " ", page.meta_desc[0]).strip() if page.meta_desc else ""
 print(f"meta_description_count: {len(page.meta_desc)}")
 print(f"meta_description_chars: {len(desc_text)}")
+if len(page.meta_desc) == 0 or len(desc_text) == 0:
+    d_status = "warn: missing meta description"
+elif len(desc_text) < 70:
+    d_status = "warn: under 70 chars (short snippet)"
+elif len(desc_text) > 160:
+    d_status = "warn: over 160 chars (SERP truncation risk)"
+else:
+    d_status = "pass"
+print(f"meta_description_status: {d_status}")
+
 h1s = [t for lvl, t in page.headings if lvl == 1]
 print(f"h1_count: {len(h1s)}")
 for t in h1s[:3]:
     print(f"h1: {t}")
 print(f"hreflang_count: {page.hreflang}")
 print(f"initial_html_text_chars: {len(text)}")
+words_list = text.split()
+print(f"visible_words: {len(words_list)}")
+print(f"img_count: {page.img_count}")
+print(f"img_missing_alt: {page.img_missing_alt}")
+print(f"img_lazy_count: {page.img_lazy}")
 script_tags = len(re.findall(r"(?i)<script\b", body))
 print(f"script_tags: {script_tags}")
 print(f"js_shell_suspect: {'yes' if len(text) < 500 and script_tags > 0 else 'no'}")

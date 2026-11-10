@@ -6,7 +6,11 @@ All notable changes to this skill are documented here. The package version follo
 
 - Answer blocks: standalone answer under the title, no plain-text label prefixes; clean `acceptedAnswer.text`. Script reports `first_p_label_prefix`, `schema_answer_texts`, and `schema_answer_label_prefix`.
 - E-E-A-T: prefer verifiable self-description over vague superlatives.
-- New `references/house-rules-acrenkey.md`: acre&key house style only, not generic rules.
+- New `references/house-rules-template.md`: customizable house style template, not generic rules.
+- Universal brand-agnostic rewrite: replaced specific test references with `references/example-audit.md` and generalized vertical guidance.
+- Image SEO: script reports `img_count`, `img_missing_alt`, and `img_lazy_count`.
+- Title and meta snippet health: script reports `title_status` and `meta_description_status` against Google SERP display thresholds.
+- Production-ready remediation deliverable: copy-paste Title, Meta description, lead answer block, and connected JSON-LD Schema.
 
 - verify-page.sh runs on Python 3.9+ (no backslash in f-string expressions).
 - robots.txt parsing follows RFC 9309: blank lines do not end a group, matching groups merge, BOM stripped, 4xx means allow all, sitemap URLs resolved.

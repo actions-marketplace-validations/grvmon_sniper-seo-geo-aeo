@@ -28,11 +28,12 @@ The procedure is [`SKILL.md`](SKILL.md). Short guides are in the [wiki](https://
 
 ## Features
 
-- Intake before any recommendation: URL, market, intent, competitors the owner names, access, baseline, and a per-bot training choice.
-- `scripts/verify-page.sh` fetches status, robots, canonical, sitemap, schema, and outlinks. It is not a rank checker.
+- Intake before any recommendation: URL, market, target query, SERP intent format match, competitors the owner names, access, baseline, and a per-bot training choice.
+- `scripts/verify-page.sh` fetches status, redirects, robots, canonical, sitemap, schema, title/meta snippet health, image SEO, and outlinks.
 - Technical checks stay `pass`, `fail`, or `NT`. A missing `index, follow` meta is not a failure.
-- Citability score from five tested categories. Categories you did not test stay `NT` and are not turned into zero. `overall` is `NT` when coverage is under 60.
+- Citability score from five tested categories: Answer, Contain, Structure, Sourced, and Information Gain (Originality). Categories you did not test stay `NT` and are not turned into zero. `overall` is `NT` when coverage is under 60.
 - An evidence ledger. A number with no row is dropped.
+- Production-ready remediation deliverables: copy-paste Title, Meta description, lead direct answer snippet, and connected Schema.org `@graph`.
 - Measurement plan for Search Console, Bing Webmaster, one defined conversion, AI referral hostnames, and a frozen citation sample.
 - Schema rules that follow visible, true content. `FAQPage` is not a rich-result tactic after 7 May 2026.
 - Official Core Web Vitals at the 75th percentile: LCP ≤ 2.5s, INP ≤ 200ms, CLS ≤ 0.1.
@@ -156,10 +157,10 @@ Badge:
 | `SKILL.md` | Triggers, intake, verification, scoring, ledger, measurement, report template, opt-in credit |
 | `references/platforms.md` | Search, user, and training crawlers; official Core Web Vitals |
 | `references/schema.md` | Visible, true markup; linked blocks; FAQ rich results after 7 May 2026 |
-| `references/verticals.md` | Comparison, calculator, local advisory, product |
-| `references/example-acrenkey.md` | Worked audit fetched 2026-11-08. Copy its shape. Do not copy its business facts onto another site. |
-| `references/house-rules-acrenkey.md` | acre&key house style only (eyebrow, nav, titles, RERA sections). Not generic rules. |
-| `scripts/verify-page.sh` | Executable fetch of status, robots, canonical, sitemap, schema, and outlinks |
+| `references/verticals.md` | Informational guides, comparisons, calculators, professional services, e-commerce, hubs |
+| `references/example-audit.md` | Worked audit of a live page. Copy its shape and remediation output. |
+| `references/house-rules-template.md` | Customizable template for brand conventions, lead answer styling, and regulatory disclosures. |
+| `scripts/verify-page.sh` | Executable fetch of status, robots, canonical, sitemap, schema, title/meta, images, and outlinks |
 
 ## FAQ
 

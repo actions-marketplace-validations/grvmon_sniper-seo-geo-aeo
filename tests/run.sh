@@ -44,6 +44,7 @@ scenario x /label "plain label prefix flagged" '^first_p_label_prefix: yes' '^sc
 scenario x /eyebrow "styled eyebrow not flagged" '^first_p_label_prefix: no' '^schema_answer_label_prefix: 0'
 scenario x "/canq?b=2" "canonical differs by query" '^canonical_matches_final: no' '^canonical_differs: query'
 scenario x "/canq?a=1" "canonical with same query matches" '^canonical_matches_final: yes' '^canonical_differs: none'
+scenario x /img "image and title/meta checks" '^img_count: 2' '^img_missing_alt: 1' '^img_lazy_count: 1' '^title_status: pass' '^meta_description_status: pass'
 
 # usage errors
 for args in "" "file:///etc/passwd" "a b"; do
