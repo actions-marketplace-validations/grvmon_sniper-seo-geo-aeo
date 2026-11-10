@@ -48,6 +48,23 @@ We don't just dump a list of technical errors on your desk. You get ready-to-pub
 * **Structured Data (Schema)** that tells bots exactly who wrote the article and why you're the authority.
 * **100% White-Label:** Zero promotional backlinks, no watermarks, and no forced badges.
 
+---
+
+### 📋 Step-by-Step Execution Workflow
+
+When you run an audit with this skill, here is the exact 10-step sequence it follows:
+
+1. **Intake & Intent Discovery:** Identifies the target URL, geographic market, target query, and SERP intent format (Guide, Comparison Table, Calculator, or Commercial Page).
+2. **Deterministic Code Verification:** Runs `scripts/verify-page.sh` with `curl` + `python3` to extract live HTTP response codes, headers, and redirects.
+3. **Bot & Crawler Access Audit:** Parses `robots.txt` (RFC 9309) for 15 search and AI crawler tokens (Googlebot, OAI-SearchBot, PerplexityBot, Claude, etc.), separating search indexing from model training.
+4. **Indexing & Technical Parity:** Verifies canonical tag accuracy, sitemap inclusion (including `.gz` archives), mobile viewport tags, and OpenGraph metadata parity.
+5. **Schema & JSON-LD Validation:** Checks structured data syntax, confirms claims reflect visible page content, and flags duplicate root entities across disconnected `<script>` blocks.
+6. **Soft 404 & SPA Router Guard:** Scans for thin content errors, blank JavaScript client shells, and SPA routers serving fake 200 statuses on missing files.
+7. **E-E-A-T & Information Gain Review:** Inspects visible author entities, credentials, outbound primary source citations, and original research absent from competing search results.
+8. **AI Citability Scoring:** Evaluates content across 5 criteria (Direct Answer, 45-Word Containment, Content Structure, Sourcing, and Originality).
+9. **Anti-AI Content Humanizer:** Lints text against 60+ robotic AI phrases to remove mechanical clichés and restore natural human writing cadence.
+10. **Remediation Deliverables & Evidence Ledger:** Outputs an auditable evidence ledger alongside copy-paste Titles, Meta Descriptions, lead answer snippets, and linked `@graph` Schema markup.
+
 ## Contents
 
 - [What it does](#what-it-does)
