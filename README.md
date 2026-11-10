@@ -6,6 +6,10 @@ Agent skill for SEO, GEO and AEO audits: it verifies a page with code, scores on
 [![Release](https://img.shields.io/github/v/release/grvmon/sniper-seo-geo-aeo)](https://github.com/grvmon/sniper-seo-geo-aeo/releases)
 [![License: MIT](https://img.shields.io/github/license/grvmon/sniper-seo-geo-aeo)](https://github.com/grvmon/sniper-seo-geo-aeo/blob/main/LICENSE)
 
+```bash
+npx skills add grvmon/sniper-seo-geo-aeo
+```
+
 Google's [AI features documentation](https://developers.google.com/search/docs/appearance/ai-features) says AI Overviews and AI Mode use the same Search systems as the rest of Google Search, with no extra technical requirements. The [generative AI optimization guide](https://developers.google.com/search/docs/fundamentals/ai-optimization-guide) (updated 2026-07-10) says there is no special schema and that Google Search ignores `llms.txt`. Other products document their own crawlers. [OpenAI](https://developers.openai.com/api/docs/bots) separates `OAI-SearchBot` (search), `GPTBot` (training), and `ChatGPT-User` (a person asked for a fetch).
 
 Citation overlap across engines depends on the query. This skill records a sampling log or marks overlap `NT`. It does not publish an overlap percentage, and it does not assume the Google top result is what other engines cite.
@@ -62,6 +66,12 @@ Search, user-triggered fetch, and training are different jobs. Leave every train
 | **Grok** | No crawler token is documented in this skill. | When the owner wants Grok measured, add it to the citation sample and record the cited URL or "not cited". Do not invent a robots.txt rule. |
 
 ## Install
+
+The shortest path on most agents:
+
+```bash
+npx skills add grvmon/sniper-seo-geo-aeo
+```
 
 ### Google Antigravity and Gemini CLI
 
