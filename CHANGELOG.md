@@ -2,6 +2,14 @@
 
 All notable changes to this skill are documented here. The package version follows [Semantic Versioning](https://semver.org/).
 
+## 1.5.0 - 2026-11-11
+
+- Feat(openai): added `-o` / `--openai` flag to `scripts/verify-page.sh` to emulate OpenAI's official `OAI-SearchBot/1.4` User-Agent string during HTTP fetch, testing whether WAFs or CDNs block OpenAI at the edge.
+- Feat(crawlers): expanded evaluated AI crawler bots from 15 to 23 agents, adding Meta-ExternalAgent, Meta-ExternalFetcher, Bytespider, Amazonbot, cohere-ai, MistralAI-User, DuckAssistBot, and GrokBot.
+- Feat(report): added dedicated "## 5. AI Crawlers & AEO Search Indexing" table to the Markdown executive summary report (`-r`), explicitly showing access for OAI-SearchBot, ChatGPT-User, GPTBot, Claude, Perplexity, Meta, and ByteDance.
+- Feat(actions): added `openai: true/false` input to `action.yml`.
+- Tests: added test coverage for `-o` / `--openai` flag emulation and multi-agent AI crawler evaluation (58 tests passing).
+
 ## 1.4.0 - 2026-11-11
 
 - Feat(images): added built-in Image Optimization Engine to `scripts/verify-page.sh`.

@@ -34,7 +34,15 @@ Google indexes the mobile version of websites. Emulate the official Googlebot Sm
 bash scripts/verify-page.sh -g 'https://example.com/platform/data-pipeline/'
 ```
 
-### 1.3 Structured JSON & Markdown Reports
+### 1.3 Emulate OpenAI OAI-SearchBot
+
+Test if Cloudflare, Akamai, or custom WAFs block OpenAI's search crawler from indexing your content at the network edge:
+
+```bash
+bash scripts/verify-page.sh -o 'https://example.com/platform/data-pipeline/'
+```
+
+### 1.4 Structured JSON & Markdown Reports
 
 * **Structured JSON (`-j` / `--json`):** Output machine-readable JSON for CI/CD pipelines, monitoring scripts, and agents:
   ```bash
@@ -45,7 +53,7 @@ bash scripts/verify-page.sh -g 'https://example.com/platform/data-pipeline/'
   bash scripts/verify-page.sh -r 'https://example.com/guide/'
   ```
 
-### 1.4 How to Read the Output
+### 1.5 How to Read the Output
 
 The script outputs line-by-line factual evidence or `nt` (not tested). Look for these critical signals:
 
@@ -53,7 +61,7 @@ The script outputs line-by-line factual evidence or `nt` (not tested). Look for 
 | :--- | :--- | :--- |
 | `http_check: pass` | Final response code was 2xx. | `pass` (200 OK) |
 | `hop_status: 200` | Shows HTTP status code of each hop. | Single clean `200` (no chains) |
-| `robots_agent: [Token] ...` | Evaluates RFC 9309 rules for 15 search, user, and training crawlers. | `allow` for search bots |
+| `robots_agent: [Token] ...` | Evaluates RFC 9309 rules for 23 search, user, and training crawlers. | `allow` for search bots |
 | `canonical_matches_final: yes` | Canonical tag matches final fetched URL. | `yes` (`canonical_differs: none`) |
 | `title_status: pass` | Title length falls between 30 and 65 characters. | `pass` (prevents SERP truncation) |
 | `meta_description_status: pass`| Meta description falls between 70 and 160 characters. | `pass` |

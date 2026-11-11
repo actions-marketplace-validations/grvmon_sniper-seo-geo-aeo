@@ -61,7 +61,7 @@ bash <skill-dir>/scripts/verify-page.sh -g 'https://example.com/page/'
 
 Exit 0 means a response was saved, even a 404. Exit 2 means usage error, missing `curl`/`python3`, or a failed fetch. The script reports pass/fail facts and prints `nt` for anything it did not do. It is an indexation and on-page validator, not a rank checker.
 
-The script prints a `robots_agent:` line for 15 crawler tokens (job class, group used, `allow` or `disallow`). `group=*` means the token has no group of its own and falls back to `User-agent: *`; record that as an implicit choice, not an explicit one. Rules are matched against path plus query string. Known limits: directive typos that Google tolerates (`useragent`, `dissallow`) are not recognised, and a robots.txt that returns 5xx is reported `nt`.
+The script prints a `robots_agent:` line for 23 crawler tokens (job class, group used, `allow` or `disallow`). `group=*` means the token has no group of its own and falls back to `User-agent: *`; record that as an implicit choice, not an explicit one. Rules are matched against path plus query string. Known limits: directive typos that Google tolerates (`useragent`, `dissallow`) are not recognised, and a robots.txt that returns 5xx is reported `nt`.
 
 Then evaluate these checks. Each is `pass`, `fail`, or `NT`.
 

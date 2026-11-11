@@ -13,6 +13,10 @@ inputs:
     description: 'Emulate Googlebot Smartphone User-Agent (true/false)'
     required: false
     default: 'false'
+  openai:
+    description: 'Emulate OpenAI OAI-SearchBot User-Agent (true/false)'
+    required: false
+    default: 'false'
   format:
     description: 'Output format: plain, json, or report'
     required: false
@@ -32,6 +36,9 @@ runs:
         FLAG=""
         if [ "${{ inputs.googlebot }}" = "true" ]; then
           FLAG="$FLAG -g"
+        fi
+        if [ "${{ inputs.openai }}" = "true" ]; then
+          FLAG="$FLAG -o"
         fi
         if [ "${{ inputs.format }}" = "json" ]; then
           FLAG="$FLAG -j"

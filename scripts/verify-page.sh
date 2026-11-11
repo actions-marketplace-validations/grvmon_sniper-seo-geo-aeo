@@ -4,17 +4,22 @@
 set -euo pipefail
 
 USE_GOOGLEBOT=0
+USE_OPENAI=0
 OUTPUT_FORMAT="plain"
 URL=""
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
     -h|--help)
-      echo "usage: verify-page.sh [-g|--googlebot] [-j|--json] [-r|--report] URL" >&2
+      echo "usage: verify-page.sh [-g|--googlebot] [-o|--openai] [-j|--json] [-r|--report] URL" >&2
       exit 2
       ;;
     -g|--googlebot)
       USE_GOOGLEBOT=1
+      shift
+      ;;
+    -o|--openai)
+      USE_OPENAI=1
       shift
       ;;
     -j|--json)
@@ -27,7 +32,7 @@ while [[ $# -gt 0 ]]; do
       ;;
     http://*|https://*)
       if [[ -n "$URL" ]]; then
-        echo "usage: verify-page.sh [-g|--googlebot] [-j|--json] [-r|--report] URL" >&2
+        echo "usage: verify-page.sh [-g|--googlebot] [-o|--openai] [-j|--json] [-r|--report] URL" >&2
         exit 2
       fi
       URL="$1"
@@ -41,7 +46,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 if [[ -z "$URL" ]]; then
-  echo "usage: verify-page.sh [-g|--googlebot] [-j|--json] [-r|--report] URL" >&2
+  echo "usage: verify-page.sh [-g|--googlebot] [-o|--openai] [-j|--json] [-r|--report] URL" >&2
   exit 2
 fi
 
@@ -63,6 +68,8 @@ cleanup() {
 trap cleanup EXIT
 if [[ "$USE_GOOGLEBOT" -eq 1 ]]; then
   UA="Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.6778.139 Mobile Safari/537.36 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)"
+elif [[ "$USE_OPENAI" -eq 1 ]]; then
+  UA="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36; compatible; OAI-SearchBot/1.4; +https://openai.com/searchbot"
 else
   UA="verify-page/1.0 (+https://github.com/grvmon/sniper-seo-geo-aeo)"
 fi
@@ -599,7 +606,8 @@ if status.startswith("2"):
 print(f"soft_404_suspect: {'yes' if is_soft_404 else 'no'}")
 print(f"last_modified: {last_modified}")
 print(f"etag: {etag}")
-print(f"user_agent: {'googlebot_smartphone' if 'Googlebot' in ua else 'default'}")
+ua_label = "googlebot_smartphone" if "Googlebot" in ua else ("openai_searchbot" if "OAI-SearchBot" in ua else "default")
+print(f"user_agent: {ua_label}")
 
 AI_CLICHE_RX = re.compile(
     r"\b(in today's (fast-paced|ever-evolving|digital)|in this ever-evolving world of|it is important to (remember|keep in mind)|when it comes to|delve into|delving into|a tapestry of|a testament to|beacon of|double-edged sword|crucial role|pivotal role|harness the power of|unleash the potential of|game-changer|revolutionary|nestled in the heart of|embark on a journey|plethora of|needless to say|in conclusion|to wrap up|all in all)\b",
@@ -781,14 +789,22 @@ agents = [
     ("Claude-SearchBot", "search"),
     ("PerplexityBot", "search"),
     ("Applebot", "search"),
+    ("Amazonbot", "search"),
+    ("DuckAssistBot", "search"),
     ("ChatGPT-User", "user"),
     ("Claude-User", "user"),
     ("Perplexity-User", "user"),
+    ("Meta-ExternalFetcher", "user"),
+    ("MistralAI-User", "user"),
     ("GPTBot", "training"),
     ("Google-Extended", "training"),
     ("ClaudeBot", "training"),
     ("Applebot-Extended", "training"),
     ("CCBot", "training"),
+    ("Meta-ExternalAgent", "training"),
+    ("Bytespider", "training"),
+    ("cohere-ai", "training"),
+    ("GrokBot", "training"),
     ("OAI-AdsBot", "ads"),
 ]
 path = path_of(final_url)
@@ -797,6 +813,8 @@ notes = {
     "ChatGPT-User": "OpenAI: robots.txt may not apply to this user-triggered agent",
     "Perplexity-User": "Perplexity: this user-triggered agent generally ignores robots.txt",
     "Google-Extended": "token only; not a separate HTTP user agent; does not control Google Search",
+    "Meta-ExternalFetcher": "Meta: user-initiated fetch in Meta AI and messaging apps",
+    "MistralAI-User": "Mistral: user-initiated fetch in Le Chat",
 }
 for token, kind in agents:
     if robots_mode == "nt":
@@ -966,7 +984,8 @@ elif out_format == "report":
     md.append("")
     md.append(f"**Target URL:** `{page_url}`  ")
     md.append(f"**Final URL:** `{final_url}`  ")
-    md.append(f"**HTTP Status:** `{status}` ({redirects} redirects) | **User-Agent:** `{'Googlebot Smartphone' if 'Googlebot' in ua else 'Default'}`")
+    md_ua = "Googlebot Smartphone" if "Googlebot" in ua else ("OpenAI OAI-SearchBot" if "OAI-SearchBot" in ua else "Default")
+    md.append(f"**HTTP Status:** `{status}` ({redirects} redirects) | **User-Agent:** `{md_ua}`")
     md.append("")
     md.append("## 1. Technical & Indexation Health")
     md.append("| Audit Element | Result | Details |")
@@ -974,7 +993,11 @@ elif out_format == "report":
     md.append(f"| HTTP Response | {'PASS' if status.startswith('2') else 'FAIL'} | HTTP {status} (hop: {' '.join(hop_statuses) or 'none'}) |")
     md.append(f"| Canonical Parity | {'PASS' if canonical_status == 'pass' else 'WARN'} | {canonical_status} |")
     md.append(f"| Mobile Viewport | {'PASS' if vp_status == 'pass' else 'WARN'} | {vp_status} |")
-    md.append(f"| Robots.txt Access | {'PASS' if robots_status == '200' or robots_mode == 'allow_all' else 'WARN'} | Googlebot: {decision('Googlebot', path)[1] if robots_mode not in ('nt', 'allow_all') else ('allow' if robots_mode == 'allow_all' else 'nt')} |")
+    g_dec = decision('Googlebot', path)[1] if robots_mode not in ('nt', 'allow_all') else ('allow' if robots_mode == 'allow_all' else 'nt')
+    oai_dec = decision('OAI-SearchBot', path)[1] if robots_mode not in ('nt', 'allow_all') else ('allow' if robots_mode == 'allow_all' else 'nt')
+    perp_dec = decision('PerplexityBot', path)[1] if robots_mode not in ('nt', 'allow_all') else ('allow' if robots_mode == 'allow_all' else 'nt')
+    robots_pass = (robots_status == '200' or robots_mode == 'allow_all') and (g_dec == 'allow' and oai_dec == 'allow')
+    md.append(f"| Robots.txt Access | {'PASS' if robots_pass else 'WARN'} | Googlebot: {g_dec} \| OAI-SearchBot: {oai_dec} \| Perplexity: {perp_dec} |")
     md.append(f"| Sitemap Inclusion | {'PASS' if norm(final_url) in locs_n else 'WARN'} | In sitemap: {'yes' if norm(final_url) in locs_n else ('nt' if incomplete else 'no')} ({len(locs_n)} URLs) |")
     md.append(f"| Soft 404 Guard | {'PASS' if not is_soft_404 else 'FAIL'} | Suspect: {'yes' if is_soft_404 else 'no'} |")
     md.append("")
@@ -1003,5 +1026,13 @@ elif out_format == "report":
     md.append(f"| Modern Formats | {'PASS' if legacy_img_count == 0 else 'WARN'} | {modern_img_count} modern (WebP/AVIF/SVG), {legacy_img_count} legacy |")
     md.append(f"| Lazy Loading | {'PASS' if page.img_lazy > 0 or page.img_count == 0 else 'INFO'} | {page.img_lazy} lazy loaded |")
     md.append(f"| File Size Check | {'PASS' if img_oversized_count == 0 else 'WARN'} | {img_oversized_count} oversized (>200 KB) image(s) detected |")
+    md.append("")
+    md.append("## 5. AI Crawlers & AEO Search Indexing")
+    md.append("| Crawler / Engine | Category | robots.txt Access |")
+    md.append("| :--- | :--- | :--- |")
+    for b_name in ("OAI-SearchBot", "ChatGPT-User", "GPTBot", "Claude-SearchBot", "PerplexityBot", "Meta-ExternalAgent", "Bytespider", "Amazonbot"):
+        b_dec = decision(b_name, path)[1] if robots_mode not in ('nt', 'allow_all') else ('allow' if robots_mode == 'allow_all' else 'nt')
+        b_cat = "Search (AEO)" if b_name in ("OAI-SearchBot", "Claude-SearchBot", "PerplexityBot", "Amazonbot") else ("User Assistant" if "User" in b_name else "Model Training")
+        md.append(f"| `{b_name}` | {b_cat} | {b_dec.upper()} |")
     _real_print("\n".join(md))
 PY

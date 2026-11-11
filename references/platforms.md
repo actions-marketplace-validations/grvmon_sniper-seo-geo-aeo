@@ -14,14 +14,22 @@ Allow search crawlers when the page should be findable in that product. User-tri
 | Claude-SearchBot | Search | Indexes content for Claude search. Disabling it can reduce visibility in those results. [Anthropic crawlers](https://support.claude.com/en/articles/8896518-does-anthropic-crawl-data-from-the-web-and-how-can-site-owners-block-the-crawler). |
 | PerplexityBot | Search | Surfaces and links sites in Perplexity search. Not used to crawl for foundation-model training. [Perplexity crawlers](https://docs.perplexity.ai/docs/resources/perplexity-crawlers). |
 | Applebot | Search | Apple's search crawler. Confirm the current token list with Apple before blocking it. |
+| Amazonbot | Search | Amazon's web crawler used for Alexa answer search, Rufus AI shopping assistant, and machine learning pipelines. [Amazonbot](https://developer.amazon.com/amazonbot). |
+| DuckAssistBot | Search | DuckDuckGo's AI search assistant used for answering queries and generating summaries. |
 | ChatGPT-User | User | Fetches a page when a person asks ChatGPT or a Custom GPT. Not an automatic crawl, and not the control for ChatGPT search. robots.txt may not apply. |
 | Claude-User | User | Fetches pages for user-initiated Claude requests. Disabling it stops those retrievals. |
 | Perplexity-User | User | Fetches a page to answer a user. Not a training crawl. Generally ignores robots.txt. |
+| Meta-ExternalFetcher | User | Fetches web links on demand when users share or prompt links in Meta AI, WhatsApp, and Instagram. |
+| MistralAI-User | User | Fetches web pages for user-initiated live web lookups in Mistral AI's Le Chat assistant. |
 | GPTBot | Training | Crawls content that may train OpenAI foundation models. Disallow means do not use the content for that training. Independent of OAI-SearchBot. |
 | Google-Extended | Training | robots.txt token only. It is not a separate HTTP user agent. It manages use for Gemini training and for grounding in Gemini Apps and Vertex AI. It does not control inclusion or ranking in Google Search. [Google's common crawlers](https://developers.google.com/crawling/docs/crawlers-fetchers/google-common-crawlers). |
 | ClaudeBot | Training | Collects content that may train Anthropic models. A group that names ClaudeBot overrides a general rule for that path. |
 | Applebot-Extended | Training | Apple's training token. Confirm the current Apple documentation before setting it. |
 | CCBot | Training | Common Crawl's crawler. Treat Allow or Disallow as a training decision, not a search decision. |
+| Meta-ExternalAgent | Training | Meta's web crawler used for training Llama foundation models and indexing web data. |
+| Bytespider | Training | ByteDance's crawler used for TikTok search and Doubao model training. Known for high crawl frequency. |
+| cohere-ai | Training | Cohere's web crawler used for enterprise foundation model training. |
+| GrokBot | Training | xAI's crawler used for Grok model training and search integration. |
 | OAI-AdsBot | Ads | Visits pages submitted as ChatGPT ads. OpenAI says this data is not used to train foundation models. |
 
 A `User-agent: *` Allow also lets through any training crawler that has no group of its own. Record that as an implicit choice, not as an explicit one.
@@ -33,17 +41,21 @@ User-agent: Bingbot
 User-agent: OAI-SearchBot
 User-agent: Claude-SearchBot
 User-agent: PerplexityBot
+User-agent: Amazonbot
 Allow: /
 
 # User-triggered. ChatGPT-User and Perplexity-User may ignore robots.txt.
 User-agent: ChatGPT-User
 User-agent: Claude-User
+User-agent: Meta-ExternalFetcher
 Allow: /
 
 # Training. Uncomment one stance after the owner chooses.
 # User-agent: GPTBot
 # User-agent: Google-Extended
 # User-agent: ClaudeBot
+# User-agent: Meta-ExternalAgent
+# User-agent: Bytespider
 # Disallow: /
 ```
 

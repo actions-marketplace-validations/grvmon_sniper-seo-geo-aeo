@@ -62,7 +62,7 @@ When you run an audit with this skill, here is the exact 10-step sequence it fol
 
 1. **Intake & Intent Discovery:** Identifies the target URL, geographic market, target query, and SERP intent format (Guide, Comparison Table, Calculator, or Commercial Page).
 2. **Deterministic Code Verification:** Runs `scripts/verify-page.sh` with `curl` + `python3` to extract live HTTP response codes, headers, and redirects.
-3. **Bot & Crawler Access Audit:** Parses `robots.txt` (RFC 9309) for 15 search and AI crawler tokens (Googlebot, OAI-SearchBot, PerplexityBot, Claude, etc.), separating search indexing from model training.
+3. **Bot & Crawler Access Audit:** Parses `robots.txt` (RFC 9309) for 23 search and AI crawler tokens (Googlebot, OAI-SearchBot, PerplexityBot, Claude, Meta, Amazonbot, etc.), separating search indexing from model training.
 4. **Indexing & Technical Parity:** Verifies canonical tag accuracy, sitemap inclusion (including `.gz` archives), mobile viewport tags, and OpenGraph metadata parity.
 5. **Schema & JSON-LD Validation:** Checks structured data syntax, confirms claims reflect visible page content, and flags duplicate root entities across disconnected `<script>` blocks.
 6. **Soft 404 & SPA Router Guard:** Scans for thin content errors, blank JavaScript client shells, and SPA routers serving fake 200 statuses on missing files.
@@ -88,7 +88,7 @@ When you run an audit with this skill, here is the exact 10-step sequence it fol
 ## Features
 
 - Intake before any recommendation: URL, market, target query, SERP intent format match, competitors the owner names, access, baseline, and a per-bot training choice.
-- `scripts/verify-page.sh` fetches status, redirects, robots, canonical, sitemap, schema syntax and duplicate root entity types, title/meta and OpenGraph snippet health, mobile viewport, soft 404 detection (including SPA `llms.txt` fallbacks), content humanization (AI cliché scanner), image SEO, and outlinks. Supports `-g` / `--googlebot` for Googlebot Smartphone emulation.
+- `scripts/verify-page.sh` fetches status, redirects, robots, canonical, sitemap, schema syntax and duplicate root entity types, title/meta and OpenGraph snippet health, mobile viewport, soft 404 detection (including SPA `llms.txt` fallbacks), content humanization (AI cliché scanner), image SEO, and outlinks. Supports `-g` / `--googlebot` for Googlebot Smartphone emulation and `-o` / `--openai` for OpenAI OAI-SearchBot emulation.
 - Image optimization & layout stability: audits missing alt attributes, lazy loading, modern image formats (WebP/AVIF/SVG), explicit width/height dimensions (CLS prevention), and oversized image files (>200 KB).
 - Technical checks stay `pass`, `fail`, or `NT`. A missing `index, follow` meta is not a failure.
 - Content humanization & anti-AI cadence: flags formulaic phrases (a style lint, not a ranking test) and gives editing guidance on sentence rhythm and specificity.

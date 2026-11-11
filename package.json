@@ -1,6 +1,6 @@
 {
   "name": "@grvmon/sniper-seo-geo-aeo",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "Verifies how Google, ChatGPT, and Perplexity read your web pages. Checks bot access, schema, heading hierarchy, answer extractability, and image optimization, then drafts clean fixes without fluff.",
   "author": "Gaurav Mongia (https://www.linkedin.com/in/gaurav-a-mongia)",
   "homepage": "https://github.com/grvmon/sniper-seo-geo-aeo",
