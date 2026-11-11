@@ -143,7 +143,7 @@ python3 "$DIR/tests/fixture_server.py" "x" "$pf" & pid=$!
 for _ in $(seq 50); do [[ -s "$pf" ]] && break; sleep 0.1; done
 json_out="$(bash "$VP" -j "http://localhost:$(cat "$pf")/page" 2>&1)"
 kill "$pid" 2>/dev/null; wait "$pid" 2>/dev/null; rm -f "$pf"
-if python3 -c "import json, sys; d = json.loads(sys.argv[1]); assert d['http']['status'] == '200' and 'metadata' in d and 'headings' in d and 'dimension_status' in d['images']" "$json_out" 2>/dev/null; then
+if python3 -c "import json, sys; d = json.loads(sys.argv[1]); assert d['http']['status'] == '200' and 'metadata' in d and 'headings' in d and 'dimension_status' in d['images'] and 'note' in d['robots']['agents']['ChatGPT-User']" "$json_out" 2>/dev/null; then
   ok "json flag produces valid structured schema"
 else
   bad "json flag failed to produce valid json" "$json_out"

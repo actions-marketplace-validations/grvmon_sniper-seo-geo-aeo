@@ -812,9 +812,12 @@ print(f"robots_path: {path}")
 notes = {
     "ChatGPT-User": "OpenAI: robots.txt may not apply to this user-triggered agent",
     "Perplexity-User": "Perplexity: this user-triggered agent generally ignores robots.txt",
-    "Google-Extended": "token only; not a separate HTTP user agent; does not control Google Search",
+    "Claude-User": "Anthropic: user-initiated fetch for Claude prompts",
     "Meta-ExternalFetcher": "Meta: user-initiated fetch in Meta AI and messaging apps",
     "MistralAI-User": "Mistral: user-initiated fetch in Le Chat",
+    "Google-Extended": "token only; not a separate HTTP user agent; does not control Google Search",
+    "Applebot-Extended": "Apple: token only; controls generative AI training, not Apple search indexing",
+    "Bytespider": "ByteDance: crawler for TikTok search and model training; high crawl frequency",
 }
 for token, kind in agents:
     if robots_mode == "nt":
@@ -886,12 +889,12 @@ if out_format == "json":
     robots_agents_data = {}
     for token, kind in agents:
         if robots_mode == "nt":
-            robots_agents_data[token] = {"kind": kind, "group": None, "decision": "nt", "reason": "robots.txt not fetched"}
+            robots_agents_data[token] = {"kind": kind, "group": None, "decision": "nt", "reason": "robots.txt not fetched", "note": notes.get(token)}
         elif robots_mode == "allow_all":
-            robots_agents_data[token] = {"kind": kind, "group": "none", "decision": "allow", "reason": f"robots.txt {robots_status}"}
+            robots_agents_data[token] = {"kind": kind, "group": "none", "decision": "allow", "reason": f"robots.txt {robots_status}", "note": notes.get(token)}
         else:
             used, result, why = decision(token, path)
-            robots_agents_data[token] = {"kind": kind, "group": used, "decision": result, "reason": why}
+            robots_agents_data[token] = {"kind": kind, "group": used, "decision": result, "reason": why, "note": notes.get(token)}
 
     report_json = {
         "url": page_url,
