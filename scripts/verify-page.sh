@@ -997,7 +997,7 @@ elif out_format == "report":
     oai_dec = decision('OAI-SearchBot', path)[1] if robots_mode not in ('nt', 'allow_all') else ('allow' if robots_mode == 'allow_all' else 'nt')
     perp_dec = decision('PerplexityBot', path)[1] if robots_mode not in ('nt', 'allow_all') else ('allow' if robots_mode == 'allow_all' else 'nt')
     robots_pass = (robots_status == '200' or robots_mode == 'allow_all') and (g_dec == 'allow' and oai_dec == 'allow')
-    md.append(f"| Robots.txt Access | {'PASS' if robots_pass else 'WARN'} | Googlebot: {g_dec} \| OAI-SearchBot: {oai_dec} \| Perplexity: {perp_dec} |")
+    md.append(f"| Robots.txt Access | {'PASS' if robots_pass else 'WARN'} | Googlebot: {g_dec} / OAI-SearchBot: {oai_dec} / Perplexity: {perp_dec} |")
     md.append(f"| Sitemap Inclusion | {'PASS' if norm(final_url) in locs_n else 'WARN'} | In sitemap: {'yes' if norm(final_url) in locs_n else ('nt' if incomplete else 'no')} ({len(locs_n)} URLs) |")
     md.append(f"| Soft 404 Guard | {'PASS' if not is_soft_404 else 'FAIL'} | Suspect: {'yes' if is_soft_404 else 'no'} |")
     md.append("")
